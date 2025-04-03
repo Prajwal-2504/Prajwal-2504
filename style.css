@@ -1,0 +1,580 @@
+/* Container for centering the table */
+h3 {
+    margin: 5px 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin-left: 170px;
+    margin-right: 150px;
+}
+
+.container {
+    max-width: 800px;
+    margin-left: 170px;
+    padding: 20px;
+}
+
+/* Styling for the Add New Week button */
+button.add-week-btn {
+    background-color: #FF8C00; /* Orange background color */
+    color: white; /* White text for readability */
+    border: none; /* Remove default border */
+    padding: 10px 20px; /* Spacing for a substantial button */
+    font-size: 17px; /* Clear font size */
+    font-weight: bold; /* Bold for prominence */
+    border-radius: 5px; /* Rounded corners for a modern look */
+    cursor: pointer; /* Pointer on hover */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover and shadow transitions */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: inline-block; /* Makes button behave like a standard button */
+    margin-top: 20px; /* Space above the button */
+    position: relative;
+}
+
+button.add-week-btn:hover {
+    transform: scale(0.97);  /* Slightly scales down on active press */
+    background-color: #FF7F00; /* Slightly darker orange on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+
+button.add-week-btn:active {
+    background-color: #FF6A00; /* Even darker orange when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow on click */
+}
+
+button.attendance-btn {
+    background-color: #d2691e; /* Warm brown background */
+    color: #fff; /* White text for contrast */
+    border: 2px solid #8b4513; /* Darker brown border */
+    padding: 12px 25px; /* Comfortable padding */
+    font-size: 16px;
+    font-weight: bold; /* Bold text for emphasis */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.15); /* Gentle shadow */
+    display: inline-block;
+    margin-top: 20px;
+}
+
+/* Hover and active states for interactivity */
+button.attendance-btn:hover {
+    background-color: #cd853f; /* Slightly lighter brown on hover */
+    box-shadow: 0 7px 10px rgba(0, 0, 0, 0.25); /* Enhanced shadow */
+    transform: scale(1.05); /* Subtle enlargement */
+}
+
+button.attendance-btn:active {
+    background-color: #8b4513; /* Darker shade on active */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Reduced shadow on active */
+    transform: scale(1); /* Return to original size */
+}
+
+/* Styling for the Add New Table button */
+/* Main table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid black;
+    text-align: center;
+    cursor: default; /* Makes cells clickable */
+}
+.period{
+    cursor: pointer;
+}
+.Present { background-color: rgb(79, 221, 112); }
+.Absent { background-color: rgb(243, 94, 107); }
+.no-class { background-color: rgb(124, 126, 130); }
+
+/* Styling for each tbody section */
+.table-section {
+    display: block;
+}
+
+/* Header styling */
+.table-header {
+    background-color: #f2f2f2;
+}
+
+/* Attendance menu styling */
+.Attendance-menu {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    z-index: 1000;
+    width: 200px;
+    position: absolute;
+}
+
+.Attendance-menu label {
+    display: block;
+    margin-bottom: 5px;
+}
+.Attendance-menu .period-name-input{
+    font-size: 16px;
+    width: 96%;
+    margin-bottom: 10px;
+}
+.Attendance-menu .ok-button {
+    margin-top: 5px;
+    background-color: #007BFF; /* Blue background */
+    color: white; /* White text for contrast */
+    border: none; /* Remove default border */
+    padding: 8px 16px; /* Spacing inside the button */
+    font-size: 14px; /* Text size */
+    font-weight: bold; /* Bold text for emphasis */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Show pointer on hover */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.Attendance-menu .ok-button:hover {
+    background-color: #0069D9; /* Darker blue on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+
+.Attendance-menu .ok-button:active {
+    background-color: #0056b3; /* Even darker blue when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow on click */
+}
+
+.Attendance-menu .cancel-button {
+    background-color: #d3d3d3; /* Light gray background */
+    color: #333; /* Darker gray text for contrast */
+    border: none; /* Remove default border */
+    padding: 8px 16px; /* Spacing to match OK button */
+    font-size: 14px; /* Consistent text size */
+    font-weight: bold; /* Bold text for visibility */
+    border-radius: 5px; /* Rounded corners for a soft look */
+    cursor: pointer; /* Show pointer on hover */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin-left: 8px; /* Space between Cancel and OK buttons */
+}
+
+.Attendance-menu .cancel-button:hover {
+    background-color: #b0b0b0; /* Slightly darker gray on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+
+.Attendance-menu .cancel-button:active {
+    background-color: #a9a9a9; /* Darker gray when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow */
+}
+
+.all-menu {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    z-index: 1000;
+    width: 200px;
+}
+.all-menu h3{
+    margin: 2px;
+}
+.all-menu label {
+    display: block;
+    margin: 5px 0;
+}
+.all-menu .ok-button {
+    margin-top: 5px;
+    background-color: #007BFF; /* Blue background */
+    color: white; /* White text for contrast */
+    border: none; /* Remove default border */
+    padding: 8px 16px; /* Spacing inside the button */
+    font-size: 14px; /* Text size */
+    font-weight: bold; /* Bold text for emphasis */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Show pointer on hover */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.all-menu .ok-button:hover {
+    background-color: #0069D9; /* Darker blue on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+
+.all-menu .ok-button:active {
+    background-color: #0056b3; /* Even darker blue when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow on click */
+}
+
+.all-menu .cancel-button {
+    background-color: #d3d3d3; /* Light gray background */
+    color: #333; /* Darker gray text for contrast */
+    border: none; /* Remove default border */
+    padding: 8px 16px; /* Spacing to match OK button */
+    font-size: 14px; /* Consistent text size */
+    font-weight: bold; /* Bold text for visibility */
+    border-radius: 5px; /* Rounded corners for a soft look */
+    cursor: pointer; /* Show pointer on hover */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin-left: 8px; /* Space between Cancel and OK buttons */
+}
+
+.all-menu .cancel-button:hover {
+    background-color: #b0b0b0; /* Slightly darker gray on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+
+.all-menu .cancel-button:active {
+    background-color: #a9a9a9; /* Darker gray when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow */
+}
+/* Styling for the All button */
+/* All Button */
+button.all-btn {
+    background-color: #FFEB3B; /* Bright yellow */
+    color: white;
+    font-size: 18px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+button.all-btn:hover {
+    background-color: #FFD700; /* Golden shade on hover */
+}
+button.all-btn:active{
+    transform: scale(0.9);  /* Slightly scales down on active press */
+}
+
+/* Delete Button */
+button.del-btn {
+    background-color: #888888; /* Gray color */
+    color: white;
+    font-size: 18px; /* Larger font size */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button.del-btn:hover {
+    background-color: #666666; /* Darker gray for hover */
+}
+button.del-btn:active{
+    transform: scale(0.92);  /* Slightly scales down on active press */
+}
+.week-buttons {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: -136px;
+}
+
+.all-week-btn {
+    padding: 10px 16px;
+    background-color: #6A0DAD; /* Deep purple for normal state */
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.all-week-btn:hover {
+    background-color: #7D3C98; /* Softer purple on hover */
+}
+
+.all-week-btn:active {
+    background-color: #9370DB; /* Soft lavender for active state */
+    transform: scale(0.94); /* Slight shrink effect */
+}
+
+
+.delete-week-btn {
+    padding: 10px 16px;
+    background-color: #888888;  /* Neutral gray for Delete button */
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s, transform 0.1s;
+}
+.delete-week-btn:hover {
+    background-color: #777777;  /* Darker gray on hover for Delete button */
+}
+/* Active styles for pressing down the button */
+.delete-week-btn:active {
+    transform: scale(0.94);  /* Slightly scales down on active press */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);  /* Reduced shadow on active press */
+}
+.attendance-display {
+    padding: 30px; /* More padding for spacious design */
+    background-color: rgb(255, 255, 255); /* White background for a clean look */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    font-family: 'Arial', sans-serif; /* Clean and legible font */
+    margin: 20px auto; /* Center the section with margin */
+    max-width: 1200px; /* Limit max width for large screens */
+    border: 2px solid rgb(160, 160, 160); /* Light gray border for subtle outlining */
+}
+
+.attendance-container {
+    padding: 10px;
+    border: 2px solid #171717;
+    margin-bottom: 20px;
+}
+
+/* Subject attendance styling */
+/* General styling for the subject-attendance section */
+.subject-attendance {
+    background-color: #f9f9f9;  /* Light background for readability */
+    border-radius: 8px;         /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin-bottom: 20px;        /* Space between attendance sections */
+    padding: 20px;              /* Adequate padding for spacing */
+    transition: all 0.3s ease;  /* Smooth transition for hover effects */
+}
+
+/* Styling for the list of pointers (ul li) */
+.subject-attendance ul {
+    list-style: none;           /* Remove default bullets */
+    padding-left: 0;            /* Remove default padding */
+    margin: 10px;
+}
+
+.subject-attendance ul li {
+    font-size: 16px;            /* Normal text size */
+    color: #666;                /* Light gray color for list items */
+    margin-bottom: 8px;         /* Space between list items */
+    padding-left: 20px;         /* Indentation for list items */
+    position: relative;         /* Positioning for custom bullets */
+}
+
+.subject-attendance ul li::before {
+    content: "\2022";           /* Unicode for a bullet */
+    font-size: 20px;            /* Slightly larger bullet */
+    color: #007bff;             /* Blue bullet for contrast */
+    position: absolute;         /* Positioning the bullet */
+    left: 0;                    /* Align to the left edge */
+    top: 0;                     /* Align to the top */
+}
+
+/* Color themes for attendance percentages */
+.high-attendance { background-color: #60ec80; } /* Green for 75% and above */
+.medium-attendance { background-color: #edc749; } /* Yellow for 60%-74% */
+.low-attendance { background-color: #ef626e; } /* Red for below 60% */
+
+/* List styling */
+.subject-attendance ul {
+    list-style-type: disc;
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+
+.saved-btn, .download-btn {
+    background-color: #008080; /* Teal base color */
+    color: white; /* White text for contrast */
+    padding: 10px 20px; /* Add padding for a comfortable click area */
+    font-size: 16px; /* Font size for readability */
+    border: none; /* No border for a clean look */
+    border-radius: 8px; /* Rounded corners for smooth appearance */
+    cursor: pointer; /* Pointer cursor to indicate it's clickable */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 16px;
+    margin-bottom: 5px;
+}
+
+.saved-btn:hover , .download-btn:hover{
+    background-color: #006666; /* Darker teal on hover */
+}
+
+.saved-btn:active, .download-btn:active {
+    background-color: #004d4d; /* Even darker teal on active click */
+    transform: scale(0.98); /* Slightly smaller on click for effect */
+}
+.user_input_file{
+    font-size: x-large;
+}
+
+.history{
+    font-size: large;
+}
+
+.distinguish{
+    border-color: black;
+}
+
+#period-container {
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #FF6347;  /* Tomato Red border for vibrancy */
+    background-color: #d6f9b6;  /* Lavender background for a soft, relaxing feel */
+    font-family: 'Arial', sans-serif;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns layout */
+    gap: 20px; /* Larger spacing between input boxes */
+    border-radius: 15px;  /* Rounded corners for smooth edges */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+#period-container h3 {
+    grid-column: span 4; /* Make the title span all columns */
+    font-size: 26px;
+    font-weight: bold;
+    color: #4B0082;  /* Indigo color for the title */
+    text-align: center;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2); /* Text shadow for more depth */
+}
+
+#period-container div {
+    display: flex;
+    justify-content: center;
+}
+
+#period-container input {
+    padding: 15px;
+    font-size: 16px;
+    width: 100%; /* Fill the column */
+    box-sizing: border-box; /* Ensure full width including padding */
+    border: 2px solid #FFD700; /* Gold border for input fields */
+    border-radius: 8px; /* Rounded input fields */
+    background: #4169E1; /* Gradient from light pink to deep pink */
+    color: #FFF; /* White text for contrast */
+    transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
+}
+
+#period-container input:focus {
+    outline: none;
+    border-color: #00FA9A; /* Medium spring green on focus */
+    box-shadow: 0 0 5px rgba(0, 250, 154, 0.5); /* Glow effect on focus */
+}
+
+/* For Hover Background */
+#period-container input:hover {
+    border-color: #8A2BE2; /* Blue Violet */
+    background-color: rgb(220, 196, 112); /* Light Goldenrod Yellow (softer yellow) */
+}
+
+#period-container input:valid {
+    border-color: #32CD32; /* Lime Green when valid */
+}
+
+#period-container input:invalid {
+    border-color: #DC143C; /* Crimson border when invalid */
+}
+
+#period-container div:hover {
+    transform: scale(1.05); /* Slight zoom effect when hovering over input container */
+}
+
+#period-container input::placeholder {
+    color: #E0FFFF; /* Light cyan for placeholder text */
+    font-style: italic; /* Italic style for placeholders */
+}
+
+#period-container div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#period-container div input {
+    transition: transform 0.3s ease-in-out; /* Smooth transform effect */
+}
+
+#period-container div:hover input {
+    transform: scale(1.05); /* Slight zoom effect on input field */
+}
+/* Style for the container */
+#first-time-date {
+    font-family: Arial, sans-serif;
+    max-width: 450px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: none;
+    margin-top: 10px;
+    margin-bottom: -85px;
+}
+
+/* Style for the heading */
+#first-time-date h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Style for the date input field */
+#start-date {
+    width: 90%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#start-date:focus {
+    border-color: #007bff;
+}
+
+/* Style for the submit button */
+#first-time-date button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#first-time-date button:hover {
+    background-color: #0056b3;
+}
+
+#first-time-date button:active {
+    background-color: #004080;
+}
+
+/* Style for the date input field when hovered */
+#start-date:hover {
+    border-color: #007bff;
+}
+
+/* Style for the date input field when invalid */
+#start-date:invalid {
+    border-color: #ff4d4d;
+}
+
+/* Style for the date input field when valid */
+#start-date:valid {
+    border-color: #28a745;
+}

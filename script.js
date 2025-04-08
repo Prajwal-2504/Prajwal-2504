@@ -7,7 +7,7 @@ const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 // Event listeners
 window.addEventListener('load', loadStoredTimetable);
 window.addEventListener('beforeunload', SaveData);
-setInterval(displaySubjects,1000);
+//setInterval(displaySubjects,1000);
 // Function to check if there are any week tables
 function check_out(){
     let weeks = document.querySelectorAll(".table-section");
@@ -326,6 +326,17 @@ function deleteAllWeek(weekTable) {
     weekTable.remove(); // This removes the entire table
     check_out();
 }
+// Add event listener to document to detect 'Enter' key press
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        const attendanceMenu = document.querySelector('.Attendance-menu');
+        const allMenu = document.querySelector('.all-menu');
+        if (attendanceMenu || allMenu) {
+            const okButton = (attendanceMenu || allMenu).querySelector('.ok-button');
+            okButton.click();
+        }
+    }
+});
 function showPeriodMenu(cell) {
     const menu = document.createElement("div");
     menu.className = "Attendance-menu";
@@ -342,6 +353,7 @@ function showPeriodMenu(cell) {
     showMenu(cell, menu);
     const okButton = menu.querySelector(".ok-button");
     const periodNameInput = menu.querySelector(".period-name-input");
+    periodNameInput.focus();
     okButton.addEventListener("click", () => {
         const selectedStatus = menu.querySelector('input[name="Attendance"]:checked')?.value;
         const newPeriodName = periodNameInput.value.trim();
@@ -383,6 +395,7 @@ function showPeriodMenu(cell) {
         }
         // Set the new period name
         cell.textContent = newPeriodName;
+        displaySubjects();
         menu.remove(); // Close the menu
     });
     const cancelButton = menu.querySelector(".cancel-button");
@@ -927,12 +940,11 @@ function displaySubjects() {
     title.textContent = 'Unique Period Names (Click to Edit)';
     container.appendChild(title);
     uniquePeriodNames.forEach((name) => {
-        let nameContainer = document.createElement('div');
         
         // Create an input field for each period name
         let inputElement = document.createElement('input');
         inputElement.value = name;
-        nameContainer.appendChild(inputElement);
+        //nameContainer.appendChild(inputElement);
         // Add event listener to handle input change
         inputElement.addEventListener('input', (event) => {
             let newName = event.target.value.trim();
@@ -947,7 +959,7 @@ function displaySubjects() {
             // Update the original value in the list
             name = newName;
         });
-        container.appendChild(nameContainer);
+        container.appendChild(inputElement);
     });
     return uniquePeriodNames;
 }

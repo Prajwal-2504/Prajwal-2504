@@ -329,6 +329,7 @@ async function loadStoredTimetable() {
     // Step 1: Retrieve stored timetable data
     let status_timetable = await RetrieveData(); // Ensure RetrieveData() returns the correct data structure
     const tableContainer = document.getElementById("table-container");
+    tableContainer.innerHTML = "";
     document.getElementById("add-week-btn").style.display = 'block';
     // Step 1: Retrieve stored timetable data
     if (!status_timetable || status_timetable.length === 0) {
@@ -336,7 +337,7 @@ async function loadStoredTimetable() {
         return;
     }
     // Optional: Clear existing tables before loading (uncomment if needed)
-    // tableContainer.innerHTML = "";
+    tableContainer.innerHTML = "";
     // Step 2: Iterate through each week in the timetable
     status_timetable.forEach((weekData, weekIndex) => {
         // Create a new week table

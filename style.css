@@ -1,7 +1,4 @@
 /* Container for centering the table */
-h3 {
-    margin: 5px 0;
-}
 
 body {
     font-family: Arial, sans-serif;
@@ -10,14 +7,119 @@ body {
     margin-right: 150px;
 }
 
-.container {
-    max-width: 800px;
-    margin-left: 170px;
-    padding: 20px;
+#lets-do-it{
+    margin-top: -20px;
+    display: none;
 }
 
-/* Styling for the Add New Week button */
-button.add-week-btn {
+#first-time{
+    margin-top: 50px;
+}
+
+#first-time-sign-in {
+    margin: 100px auto; /* centers horizontally with some top space */
+    padding: 30px;
+    border-radius: 15px;
+    background-color: #8bebe6;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    display: none;
+  }
+
+#first-time-sign-in p {
+font-size: 40px;
+margin-bottom: 20px;
+}
+
+#first-time-sign-in button {
+padding: 8px;
+font-size: 32px;
+background-color: #4285F4; /* Google Blue */
+color: white;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+#first-time-sign-in button:hover {
+background-color: #0b4aaf;
+}
+
+#first-time-date {
+    font-family: Arial, sans-serif;
+    max-width: 450px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: -85px;
+    display: none;
+}
+
+/* Style for the heading */
+#first-time-date h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Style for the date input field */
+#start-date {
+    width: 90%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#start-date:focus {
+    border-color: #007bff;
+}
+
+/* Style for the submit button */
+#first-time-date button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#first-time-date button:hover {
+    background-color: #0056b3;
+}
+
+#first-time-date button:active {
+    background-color: #004080;
+}
+
+/* Style for the date input field when hovered */
+#start-date:hover {
+    border-color: #007bff;
+}
+
+/* Style for the date input field when invalid */
+#start-date:invalid {
+    border-color: #ff4d4d;
+}
+
+/* Style for the date input field when valid */
+#start-date:valid {
+    border-color: #28a745;
+}
+
+#add-week-btn {
     background-color: #FF8C00; /* Orange background color */
     color: white; /* White text for readability */
     border: none; /* Remove default border */
@@ -30,21 +132,22 @@ button.add-week-btn {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     display: inline-block; /* Makes button behave like a standard button */
     margin-top: 20px; /* Space above the button */
-    position: relative;
+    position: relative; /* Positioning for potential dropdowns or menus */
+    display: none; /* Initially hidden */
 }
 
-button.add-week-btn:hover {
+#add-week-btn:hover {
     transform: scale(0.97);  /* Slightly scales down on active press */
     background-color: #FF7F00; /* Slightly darker orange on hover */
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
 }
 
-button.add-week-btn:active {
+#add-week-btn:active {
     background-color: #FF6A00; /* Even darker orange when clicked */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow on click */
 }
 
-button.attendance-btn {
+#attendance-btn {
     background-color: #d2691e; /* Warm brown background */
     color: #fff; /* White text for contrast */
     border: 2px solid #8b4513; /* Darker brown border */
@@ -60,17 +163,116 @@ button.attendance-btn {
 }
 
 /* Hover and active states for interactivity */
-button.attendance-btn:hover {
+#attendance-btn:hover {
     background-color: #cd853f; /* Slightly lighter brown on hover */
     box-shadow: 0 7px 10px rgba(0, 0, 0, 0.25); /* Enhanced shadow */
     transform: scale(1.05); /* Subtle enlargement */
 }
 
-button.attendance-btn:active {
+#attendance-btn:active {
     background-color: #8b4513; /* Darker shade on active */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Reduced shadow on active */
     transform: scale(1); /* Return to original size */
 }
+
+#period-container {
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #FF6347;  /* Tomato Red border for vibrancy */
+    background-color: #d6f9b6;  /* Lavender background for a soft, relaxing feel */
+    font-family: 'Arial', sans-serif;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns layout */
+    gap: 20px; /* Larger spacing between input boxes */
+    border-radius: 15px;  /* Rounded corners for smooth edges */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+#period-container h3 {
+    grid-column: span 4; /* Make the title span all columns */
+    font-size: 26px;
+    font-weight: bold;
+    color: #4B0082;  /* Indigo color for the title */
+    text-align: center;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2); /* Text shadow for more depth */
+}
+
+#period-container input {
+    padding: 15px;
+    font-size: 16px;
+    width: 100%; /* Fill the column */
+    box-sizing: border-box; /* Ensure full width including padding */
+    border: 2px solid #FFD700; /* Gold border for input fields */
+    border-radius: 8px; /* Rounded input fields */
+    background: #4169E1; /* Gradient from light pink to deep pink */
+    color: #FFF; /* White text for contrast */
+    transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
+}
+
+#period-container input:focus {
+    outline: none;
+    border-color: #00FA9A; /* Medium spring green on focus */
+    box-shadow: 0 0 5px rgba(0, 250, 154, 0.5); /* Glow effect on focus */
+}
+
+/* For Hover Background */
+#period-container input:hover {
+    border-color: #8A2BE2; /* Blue Violet */
+    background-color: rgb(220, 196, 112); /* Light Goldenrod Yellow (softer yellow) */
+}
+
+#period-container input:valid {
+    border-color: #32CD32; /* Lime Green when valid */
+}
+
+#period-container input:invalid {
+    border-color: #DC143C; /* Crimson border when invalid */
+}
+
+#period-container input::placeholder {
+    color: #E0FFFF; /* Light cyan for placeholder text */
+    font-style: italic; /* Italic style for placeholders */
+}
+#saved-btn, #download-btn {
+    background-color: #008080; /* Teal base color */
+    color: white; /* White text for contrast */
+    padding: 10px 20px; /* Add padding for a comfortable click area */
+    font-size: 16px; /* Font size for readability */
+    border: none; /* No border for a clean look */
+    border-radius: 8px; /* Rounded corners for smooth appearance */
+    cursor: pointer; /* Pointer cursor to indicate it's clickable */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 16px;
+    margin-bottom: 5px;
+}
+
+#saved-btn:hover , #download-btn:hover{
+    background-color: #006666; /* Darker teal on hover */
+}
+
+#saved-btn:active, #download-btn:active {
+    background-color: #004d4d; /* Even darker teal on active click */
+    transform: scale(0.98); /* Slightly smaller on click for effect */
+}
+#file_input_always,#file_input_on_first_spawn{
+    font-size: x-large;
+}
+
+h3 {
+    margin: 5px 0;
+}
+
+
+.container {
+    max-width: 800px;
+    margin-left: 170px;
+    padding: 20px;
+}
+
+/* Styling for the Add New Week button */
 
 /* Styling for the Add New Table button */
 /* Main table styling */
@@ -237,6 +439,7 @@ th, td {
 }
 /* Styling for the All button */
 /* All Button */
+
 button.all-btn {
     background-color: #FFEB3B; /* Bright yellow */
     color: white;
@@ -325,7 +528,7 @@ button.del-btn:active{
     transform: scale(0.94);  /* Slightly scales down on active press */
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);  /* Reduced shadow on active press */
 }
-.attendance-display {
+#attendance-display-section {
     padding: 30px; /* More padding for spacious design */
     background-color: rgb(255, 255, 255); /* White background for a clean look */
     border-radius: 12px; /* Rounded corners */
@@ -334,6 +537,7 @@ button.del-btn:active{
     margin: 20px auto; /* Center the section with margin */
     max-width: 1200px; /* Limit max width for large screens */
     border: 2px solid rgb(160, 160, 160); /* Light gray border for subtle outlining */
+    display: none;
 }
 
 .attendance-container {
@@ -390,30 +594,7 @@ button.del-btn:active{
 }
 
 
-.saved-btn, .download-btn {
-    background-color: #008080; /* Teal base color */
-    color: white; /* White text for contrast */
-    padding: 10px 20px; /* Add padding for a comfortable click area */
-    font-size: 16px; /* Font size for readability */
-    border: none; /* No border for a clean look */
-    border-radius: 8px; /* Rounded corners for smooth appearance */
-    cursor: pointer; /* Pointer cursor to indicate it's clickable */
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-top: 16px;
-    margin-bottom: 5px;
-}
 
-.saved-btn:hover , .download-btn:hover{
-    background-color: #006666; /* Darker teal on hover */
-}
-
-.saved-btn:active, .download-btn:active {
-    background-color: #004d4d; /* Even darker teal on active click */
-    transform: scale(0.98); /* Slightly smaller on click for effect */
-}
-.user_input_file{
-    font-size: x-large;
-}
 
 .history{
     font-size: large;
@@ -423,137 +604,8 @@ button.del-btn:active{
     border-color: black;
 }
 
-#period-container {
-    margin-top: 20px;
-    padding: 20px;
-    border: 4px solid #FF6347;  /* Tomato Red border for vibrancy */
-    background-color: #d6f9b6;  /* Lavender background for a soft, relaxing feel */
-    font-family: 'Arial', sans-serif;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columns layout */
-    gap: 20px; /* Larger spacing between input boxes */
-    border-radius: 15px;  /* Rounded corners for smooth edges */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-}
 
-#period-container h3 {
-    grid-column: span 4; /* Make the title span all columns */
-    font-size: 26px;
-    font-weight: bold;
-    color: #4B0082;  /* Indigo color for the title */
-    text-align: center;
-    margin-bottom: 30px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2); /* Text shadow for more depth */
-}
-
-#period-container input {
-    padding: 15px;
-    font-size: 16px;
-    margin: 10px;
-    box-sizing: border-box; /* Ensure full width including padding */
-    border: 2px solid #FFD700; /* Gold border for input fields */
-    border-radius: 8px; /* Rounded input fields */
-    background: #4169E1; /* Gradient from light pink to deep pink */
-    color: #FFF; /* White text for contrast */
-    transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
-}
-
-#period-container input:focus {
-    outline: none;
-    border-color: #00FA9A; /* Medium spring green on focus */
-    box-shadow: 0 0 5px rgba(0, 250, 154, 0.5); /* Glow effect on focus */
-}
-
-/* For Hover Background */
-#period-container input:hover {
-    border-color: #8A2BE2; /* Blue Violet */
-    background-color: rgb(220, 196, 112); /* Light Goldenrod Yellow (softer yellow) */
-    transform: scale(1.2);
-}
-
-#period-container input:valid {
-    border-color: #32CD32; /* Lime Green when valid */
-}
-
-#period-container input:invalid {
-    border-color: #DC143C; /* Crimson border when invalid */
-}
-
-#period-container input::placeholder {
-    color: #E0FFFF; /* Light cyan for placeholder text */
-    font-style: italic; /* Italic style for placeholders */
-}
 
 /* Style for the container */
-#first-time-date {
-    font-family: Arial, sans-serif;
-    max-width: 450px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    display: none;
-    margin-top: 10px;
-    margin-bottom: -85px;
-}
 
-/* Style for the heading */
-#first-time-date h2 {
-    font-size: 1.5em;
-    color: #333;
-    margin-bottom: 20px;
-}
 
-/* Style for the date input field */
-#start-date {
-    width: 90%;
-    padding: 10px;
-    font-size: 16px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    outline: none;
-    transition: border-color 0.3s ease;
-}
-
-#start-date:focus {
-    border-color: #007bff;
-}
-
-/* Style for the submit button */
-#first-time-date button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 1em;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#first-time-date button:hover {
-    background-color: #0056b3;
-}
-
-#first-time-date button:active {
-    background-color: #004080;
-}
-
-/* Style for the date input field when hovered */
-#start-date:hover {
-    border-color: #007bff;
-}
-
-/* Style for the date input field when invalid */
-#start-date:invalid {
-    border-color: #ff4d4d;
-}
-
-/* Style for the date input field when valid */
-#start-date:valid {
-    border-color: #28a745;
-}

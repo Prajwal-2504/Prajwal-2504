@@ -111,6 +111,7 @@ async function RetrieveData() {
 //window.onbeforeunload = SaveData();
 
 function first(){
+    main_container.innerHTML = '';
     theme.style.display = 'none';
     imp.style.display = "none";
 

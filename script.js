@@ -12,16 +12,38 @@ firebase.analytics();
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 const db = firebase.firestore();
+let main_user = null;
 let uid = null;
-let body = document.body;
+
+
+let a = "College Attendance";
+let b = "Semester 4";
+const theme = document.getElementById("theme");
+const imp = document.getElementById("lets-do-it");
+const main_container = document.getElementById("table-container");
+const add_week_btn = document.getElementById("add-week-btn");
+const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+let TimeTable = [
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '']
+];
+
 auth.onAuthStateChanged((user) => {
   const fts = document.getElementById("first-time-sign-in");
   if (user) {
-    console.log("✅ Already signed in:", user.displayName);
+    main_user = user.displayName;
     uid = user.uid;
+    console.log("✅ Already signed in:", main_user);
     loadStoredTimetable(); 
   } else {
     console.log("👋 Not signed in. Triggering login...");
+    main_container.innerHTML = "";
+    add_week_btn.style.display = 'none';
+    theme.style.display = 'none';
+    imp.style.display = 'none';
     fts.style.display = "block";
     fts.innerHTML = `
       <p>❌ You are not signed in to the Self Attendance website. Please press the <strong>"Sign in"</strong> button.</p>
@@ -31,10 +53,10 @@ auth.onAuthStateChanged((user) => {
     document.getElementById("loginBtn").addEventListener("click", () => {
       auth.signInWithPopup(provider)
         .then((result) => {
-          const user = result.user;
-          console.log("✅ Signed in:", user.displayName);
+          main_user = result.user.displayName;
+          uid = result.user.uid;
+          console.log("✅ Signed in:", main_user);
           fts.style.display = "none";
-          uid = user.uid;
           loadStoredTimetable(); // Load data now that user is signed in
         })
         .catch((error) => {
@@ -53,7 +75,8 @@ function SaveData(datatobesaved) {
         timetableData: JSON.stringify(datatobesaved)
     })
     .then(() => {
-        console.log("✅ Data saved successfully for user:", uid);
+        console.log("✅ Data saved successfully for user:", main_user);
+        alert(`Data saved successfully for user ${main_user} !`);
     })
     .catch((error) => {
         console.error("❌ Error saving data:", error);
@@ -70,10 +93,10 @@ async function RetrieveData() {
         const docSnap = await docRef.get();
         if (docSnap.exists) {
             const userretrive = docSnap.data().timetableData;
-            console.log("✅ Data retrieved for user:", uid);
+            console.log("✅ Data retrieved for user:", main_user);
             return JSON.parse(userretrive); 
         } else {
-            console.log("❌ No data found for user:", uid);
+            console.log("❌ No data found for user:", main_user);
             return null;
         }
     } catch (error) {
@@ -82,16 +105,15 @@ async function RetrieveData() {
     }
 }
 
-let a = "College Attendance";
-let b = "Semester 4";
-const theme = document.getElementById("theme");
-const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 //window.addEventListener('load', loadStoredTimetable);
 //window.addEventListener('beforeunload',() => {SaveData(convertWeekTablesToStatus())});
 //window.onbeforeunload = SaveData();
 
 function first(){
+    theme.style.display = 'none';
+    imp.style.display = "none";
+
     let First = document.getElementById("first-time");
     First.style.display = 'block';
     First.innerHTML = `
@@ -111,7 +133,7 @@ function first(){
                     status_timetable = data;
                     SaveData(status_timetable);
                     alert("Data retrieved successfully");
-                    document.getElementById("table-container").innerHTML = '';
+                    main_container.innerHTML = '';
                     remove_first();
                     loadStoredTimetable();
                 } catch (error) {
@@ -182,6 +204,7 @@ function get_starting_date() {
         });
     });
 }
+
 function adjustToPreviousMonday(date) {
     alert('Inputted date is NOT a Monday,adjusting starting date to previous Monday');
     const dayOfWeek = date.getDay(); 
@@ -189,13 +212,7 @@ function adjustToPreviousMonday(date) {
     date.setDate(date.getDate() - daysSincePreviousMonday); 
     return date;
 }
-let TimeTable = [
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', '']
-];
+
 function updateSubjectsInTimetable() {
     const updated_timetable = [[], [], [], [], []];  
     const weekTables = document.querySelectorAll(".table-section");
@@ -241,7 +258,7 @@ async function createWeeklyTables(timetable) {
         if (weekDate.getDay() !== 1) {    weekDate = adjustToPreviousMonday(weekDate);}
         remove_first();
         document.getElementById("first-time-date").style.display = "none";
-        document.getElementById("lets-do-it").style.display = "block";
+        imp.style.display = "block";
     } catch (error) {
         alert("Error getting starting date:", error);
         return;
@@ -252,7 +269,7 @@ async function createWeeklyTables(timetable) {
     }
     const weekSection = document.createElement("tbody");
     weekSection.className = "table-section";
-    const isFirstSection = document.getElementById("table-container").children.length === 0;
+    const isFirstSection = main_container.children.length === 0;
     weekSection.style.marginTop = isFirstSection ? "0px" : "50px";
 
     const headerRow = document.createElement("tr");
@@ -305,7 +322,7 @@ async function createWeeklyTables(timetable) {
         weekDate.setDate(weekDate.getDate() + 1);
     }
 
-    document.getElementById("table-container").appendChild(weekSection);
+    main_container.appendChild(weekSection);
     const buttonContainer = document.createElement("div");
     buttonContainer.className = "week-buttons";
 
@@ -328,23 +345,22 @@ async function createWeeklyTables(timetable) {
 async function loadStoredTimetable() {
     // Step 1: Retrieve stored timetable data
     let status_timetable = await RetrieveData(); // Ensure RetrieveData() returns the correct data structure
-    const tableContainer = document.getElementById("table-container");
-    tableContainer.innerHTML = "";
-    document.getElementById("add-week-btn").style.display = 'block';
+    add_week_btn.style.display = 'block';
+    main_container.innerHTML = ""; // Clear existing tables before loading
     // Step 1: Retrieve stored timetable data
     if (!status_timetable || status_timetable.length === 0) {
         first();
         return;
     }
     // Optional: Clear existing tables before loading (uncomment if needed)
-    tableContainer.innerHTML = "";
+    // main_container.innerHTML = "";
     // Step 2: Iterate through each week in the timetable
     status_timetable.forEach((weekData, weekIndex) => {
         // Create a new week table
         createWeeklyTables(weekData);
         //console.log(`Latest TimeTable - ${TimeTable}`);
         // Select the last created week table
-        const weekTables = tableContainer.querySelectorAll(".table-section");
+        const weekTables = main_container.querySelectorAll(".table-section");
         const weekTable = weekTables[weekTables.length - 1];
         
         // Select all week rows within this week table
@@ -392,10 +408,12 @@ async function loadStoredTimetable() {
         });
     });
     theme.textContent = `${a} ${b}`;
-    document.getElementById("add-week-btn").style.display = "block";
-    document.getElementById("lets-do-it").style.display = "block";
+    theme.style.display = 'block';
+    add_week_btn.style.display = "block";
+    imp.style.display = "block";
     displaySubjects();
 }
+
 function displaySubjects() {
 
     let uniquePeriodNames = new Set(); 
@@ -657,6 +675,7 @@ function showAllWeekMenu(button, weekTable) {
         menu.remove(); 
     });
 }
+
 function deleteAllWeek(weekTable) {
 
     const firstDateCell = weekTable.querySelector("td:first-child"); 
@@ -674,6 +693,7 @@ function deleteAllWeek(weekTable) {
     displaySubjects();
     check_out();
 }
+
 function showPeriodMenu(cell) {
     const menu = document.createElement("div");
     menu.className = "Attendance-menu";
@@ -747,6 +767,7 @@ function showPeriodMenu(cell) {
         menu.remove(); 
     });
 }
+
 function showAllDayMenu(cell) {
 
     const menu = document.createElement("div");
@@ -788,6 +809,7 @@ function showAllDayMenu(cell) {
         menu.remove(); 
     });
 }
+
 function deleteDay(cell) {
     let row = cell.closest('.week-row');
     let date = row.querySelector('.date-cell').textContent;
@@ -817,6 +839,7 @@ function convertWeekTablesToStatus() {
     });
     return status_timetable;
 }
+
 function convertWeekToStatus(weekTable) {
     const weekData = []; 
 
@@ -828,6 +851,7 @@ function convertWeekToStatus(weekTable) {
     });
     return weekData;
 }
+
 function convertRowToStatus(row) {
     const rowData = []; 
 
@@ -855,10 +879,7 @@ function convertRowToStatus(row) {
     return rowData;
 }
 
-let check;
-
 document.getElementById("file_input_always").addEventListener("change", function(event) {
-    const tableContainer = document.getElementById("table-container");
     const file = event.target.files[0];
 
     if (file) {
@@ -870,7 +891,7 @@ document.getElementById("file_input_always").addEventListener("change", function
                 status_timetable = data; 
                 SaveData(status_timetable);
                 alert("Data retrieved successfully");
-                tableContainer.innerHTML = ''; 
+                main_container.innerHTML = ''; 
 
                 document.getElementById("attendance-display-section").style.display = "none";
 
@@ -895,7 +916,7 @@ document.getElementById("file_input_always").addEventListener("change", function
 function downloadAsJSON() {
     status_timetable = convertWeekTablesToStatus();
     if(Array.isArray(status_timetable) && status_timetable.length === 0)   return;
-    SaveData(status_timetable);
+    //SaveData(status_timetable);
 
     const jsonString = JSON.stringify(status_timetable,null,4);
 
@@ -920,8 +941,6 @@ function formatDate(date) {
 function check_out(){
     let weeks = document.querySelectorAll(".table-section");
     if(weeks.length === 0) {
-        document.getElementById("theme").style.display = 'none';
-        document.getElementById("lets-do-it").style.display = "none";
         first();
     }
 }
@@ -966,6 +985,7 @@ function showMenu(button, menu) {
 
     observer.observe(document.body, { childList: true, subtree: true });
 }
+
 function scrollToButtonWithOffset(button) {
     const buttonPosition = button.getBoundingClientRect().top + window.scrollY;
     const offset = 123; 
@@ -987,6 +1007,7 @@ function checkifempty(any){
     }
     return a === 1;
 }
+
 function hide(){
 
     let weekTables = document.querySelectorAll(".table-section");
@@ -1001,6 +1022,7 @@ function hide(){
         });
     });    
 }
+
 function restore(){
     let weekTables = document.querySelectorAll(".table-section");
     weekTables.forEach(weekTable => {
@@ -1014,6 +1036,7 @@ function restore(){
         });
     });    
 }
+
 function addtodeleted(key,value){
     let c_list = {};
     if(!localStorage.getItem(`${b} Deleted`))
@@ -1023,7 +1046,4 @@ function addtodeleted(key,value){
     localStorage.setItem(`${b} Deleted`,JSON.stringify(c_list));
 }
 
-function c(){
-    console.log(JSON.parse(localStorage.getItem(`${b}`)));
-}
 

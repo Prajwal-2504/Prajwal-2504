@@ -73,7 +73,7 @@ function SaveData(datatobesaved) {
     }
     db.collection("users").doc(uid).set({
         timetableData: JSON.stringify(datatobesaved)
-    })
+    }, { merge: true })
     .then(() => {
         console.log("✅ Data saved successfully for user:", main_user);
         alert(`Data saved successfully for user ${main_user} !`);

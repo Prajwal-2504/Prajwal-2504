@@ -197,7 +197,7 @@ document.addEventListener('radioChange', () => {
 function SaveData(datatobesaved) {
     try{
     if (!uid) {
-        console.error('❌ No user is signed in!');
+        alert('❌ No user is signed in!');
         return;
     }
     if(!main_theme){
@@ -236,11 +236,11 @@ function SaveData(datatobesaved) {
         loadStoredTimetable();
     })
     .catch((error) => {
-        alert('❌ Error saving data:', error);
+        alert('❌ Error saving data in backend: '+ error);
     });
     }
     catch(error){
-        alert('❌ Error saving data:', error);
+        alert('❌ Error saving data in main save function: '+ error);
     }
 }
 

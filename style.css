@@ -1,19 +1,261 @@
-/* Container for centering the table */
-
 body {
     font-family: Arial, sans-serif;
     background-color: #f9f9f9;
     margin-left: 170px;
     margin-right: 150px;
+    margin-top: 105px; /* Space from the top */
+}
+#status{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 4 columns layout */
+}
+#change-start-date-btn {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for size */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Bold text */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
+#change-start-date-btn:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+#change-start-date-btn:active {
+    background-color: #3e8e41; /* Even darker green when clicked */
+    transform: scale(0.98); /* Slight shrink effect */
+}
+
+#change-start-date-btn:focus {
+    outline: none; /* Remove default focus outline */
+    box-shadow: 0 0 0 3px rgba(72, 239, 128, 0.5); /* Add custom focus outline */
+}
+#navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0.5px 40px 0.5px 0px; /* Padding for spacing */
+    z-index: 100;
+    background-color: bisque;
+    display: none; /* Initially hidden */
+    min-height: 90px;
+    max-height: 100px;
+    overflow-x: auto; 
+    overflow-y: auto;
+}
+#theme{
+    font-size: 25px;
+    font-weight: 700;
+    margin-top: 5px;
+    margin-left: 20px;
+}
+.sign-out-btn {
+    background-color: #737feb;
+    color: white;
+    border: none;
+    margin: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    outline: none;
+}
+
+/* Hover state */
+.sign-out-btn:hover {
+    background-color: #2d40eb; 
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    transform: scale(1.2);
+}
+
+/* Active state (while clicking) */
+.sign-out-btn:active {
+    background-color: #4953a7; 
+    transform: scale(0.97);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.common-period-name{
+    height: 20px;
+    margin-top: 10px;
+}
+.stt{
+    height: 16px;
+    margin-top: 10px;
+}
 #lets-do-it{
-    margin-top: -20px;
+    margin-top: 0px;
     display: none;
 }
 
-#first-time{
-    margin-top: 50px;
+/* Parent container for alignment and spacing */
+#most_important {
+    display: none; /* Aligns elements in a single row */
+    gap: 20px; /* Adds space between elements */
+    align-items: center; /* Ensures vertical centering */
+    justify-content: flex-start; /* Keeps items aligned to the left */
+    margin-top: 20px; /* Space from the top */
+}
+#add-week-btn {
+    background-color: #FF8C00; /* Orange background color */
+    color: white; /* White text for readability */
+    border: none; /* Remove default border */
+    padding: 10px 20px; /* Spacing for a substantial button */
+    font-size: 20px; /* Clear font size */
+    font-weight: bold; /* Bold for prominence */
+    border-radius: 5px; /* Rounded corners for a modern look */
+    cursor: pointer; /* Pointer on hover */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover and shadow transitions */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: inline-block; /* Makes button behave like a standard button */
+    position: relative; /* Positioning for potential dropdowns or menus */
+}
+
+#add-week-btn:hover {
+    transform: scale(0.97);  /* Slightly scales down on active press */
+    background-color: #FF7F00; /* Slightly darker orange on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+
+#add-week-btn:active {
+    background-color: #FF6A00; /* Even darker orange when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow on click */
+}
+
+/* Theme Dropdown */
+#themeDropdown {
+    width: fit-content;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #FFD700; /* Yellow accent */
+    border-radius: 6px;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3); /* Subtle glow */
+}
+
+/* Dropdown Hover */
+#themeDropdown:hover {
+    border-color: #FFC107;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5); /* Stronger glow */
+}
+
+/* Dropdown Focus */
+#themeDropdown:focus {
+    border-color: #FFB300;
+    box-shadow: 0 0 12px rgba(255, 179, 0, 0.6);
+    outline: none;
+}
+
+/* Theme Buttons */
+.themeclass {
+    font-size: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    border-radius: 8px;
+    background-color: #FFD700;
+    border: 3px solid #FFC107;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+    box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+}
+
+/* Button Hover */
+.themeclass:hover {
+    background-color: #FFC107;
+    border-color: #FFB300;
+    box-shadow: 0 6px 12px rgba(255, 193, 7, 0.6);
+    transform: scale(1.08);
+}
+
+/* Button Active */
+.themeclass:active {
+    background-color: #FFB300;
+    border-color: #FFA000;
+    box-shadow: 0 4px 10px rgba(255, 179, 0, 0.8);
+    transform: scale(0.95);
+}
+
+/* Button Focus */
+.themeclass:focus {
+    background-color: #FFB300;
+    border-color: #FFA000;
+    box-shadow: 0 0 12px rgba(255, 179, 0, 0.8);
+    outline: none;
+}
+
+/* Smooth animation */
+.themeclass, #themeDropdown {
+    transition: all 0.25s ease-in-out;
+}
+
+option {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+#first-time {
+    background-color: #ebe7e7; /* Light gray background for a clean look */
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    margin: 0px 40px 40px 40px; /* Center it horizontally with margin */
+    text-align: center; /* Center the text */
+    display: none; /* Initially hidden */
+}
+
+/* Styling for the h2 element */
+#first-time h2 {
+    font-size: 24px;
+    color: #333333; /* Dark gray text for better readability */
+    margin-bottom: 20px; /* Space between heading and file input */
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+}
+
+/* Styling for the h3 element */
+#first-time h3 {
+    font-size: 18px;
+    color: #666666; /* Lighter gray text */
+    margin-top: 20px; /* Space between paragraph and button */
+    font-family: 'Arial', sans-serif;
+}
+
+/* File input styling */
+#file_input_on_first_spawn {
+    background-color: #1fe0e0; /* Light cyan-blue background */
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-bottom: 20px; /* Space between input and other content */
+    font-family: 'Arial', sans-serif;
+    display: inline-block; /* Makes it behave like a button */
+}
+
+#file_input_on_first_spawn:hover {
+    background-color: #0fbcbc; /* Slightly darker cyan-blue on hover */
+    transform: scale(1.05);
 }
 
 #first-time-sign-in {
@@ -56,8 +298,7 @@ background-color: #0b4aaf;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    margin-top: 10px;
-    margin-bottom: -85px;
+    margin-top: 20px;
     display: none;
 }
 
@@ -119,61 +360,8 @@ background-color: #0b4aaf;
     border-color: #28a745;
 }
 
-#add-week-btn {
-    background-color: #FF8C00; /* Orange background color */
-    color: white; /* White text for readability */
-    border: none; /* Remove default border */
-    padding: 10px 20px; /* Spacing for a substantial button */
-    font-size: 17px; /* Clear font size */
-    font-weight: bold; /* Bold for prominence */
-    border-radius: 5px; /* Rounded corners for a modern look */
-    cursor: pointer; /* Pointer on hover */
-    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover and shadow transitions */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    display: inline-block; /* Makes button behave like a standard button */
-    margin-top: 20px; /* Space above the button */
-    position: relative; /* Positioning for potential dropdowns or menus */
-    display: none; /* Initially hidden */
-}
 
-#add-week-btn:hover {
-    transform: scale(0.97);  /* Slightly scales down on active press */
-    background-color: #FF7F00; /* Slightly darker orange on hover */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
-}
 
-#add-week-btn:active {
-    background-color: #FF6A00; /* Even darker orange when clicked */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow on click */
-}
-
-#attendance-btn {
-    background-color: #d2691e; /* Warm brown background */
-    color: #fff; /* White text for contrast */
-    border: 2px solid #8b4513; /* Darker brown border */
-    padding: 12px 25px; /* Comfortable padding */
-    font-size: 16px;
-    font-weight: bold; /* Bold text for emphasis */
-    border-radius: 8px; /* Rounded corners */
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.15); /* Gentle shadow */
-    display: inline-block;
-    margin-top: 20px;
-}
-
-/* Hover and active states for interactivity */
-#attendance-btn:hover {
-    background-color: #cd853f; /* Slightly lighter brown on hover */
-    box-shadow: 0 7px 10px rgba(0, 0, 0, 0.25); /* Enhanced shadow */
-    transform: scale(1.05); /* Subtle enlargement */
-}
-
-#attendance-btn:active {
-    background-color: #8b4513; /* Darker shade on active */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Reduced shadow on active */
-    transform: scale(1); /* Return to original size */
-}
 
 #period-container {
     margin-top: 20px;
@@ -236,7 +424,7 @@ background-color: #0b4aaf;
     color: #E0FFFF; /* Light cyan for placeholder text */
     font-style: italic; /* Italic style for placeholders */
 }
-#saved-btn, #download-btn {
+#attendance-btn, #download-btn {
     background-color: #008080; /* Teal base color */
     color: white; /* White text for contrast */
     padding: 10px 20px; /* Add padding for a comfortable click area */
@@ -249,13 +437,41 @@ background-color: #0b4aaf;
     margin-bottom: 5px;
 }
 
-#saved-btn:hover , #download-btn:hover{
+#attendance-btn:hover , #download-btn:hover{
     background-color: #006666; /* Darker teal on hover */
+    transform: scale(1.05);
 }
 
-#saved-btn:active, #download-btn:active {
+#attendance-btn:active, #download-btn:active {
     background-color: #004d4d; /* Even darker teal on active click */
     transform: scale(0.98); /* Slightly smaller on click for effect */
+}
+#saved-btn {
+    background-color: #d2691e; /* Warm brown background */
+    color: #fff; /* White text for contrast */
+    border: 2px solid #8b4513; /* Darker brown border */
+    padding: 12px 25px; /* Comfortable padding */
+    font-size: 25px;
+    font-weight: bold; /* Bold text for emphasis */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.15); /* Gentle shadow */
+    display: inline-block;
+    margin-top: 20px;
+}
+
+/* Hover and active states for interactivity */
+#saved-btn:hover {
+    background-color: #cd853f; /* Slightly lighter brown on hover */
+    box-shadow: 0 7px 10px rgba(0, 0, 0, 0.25); /* Enhanced shadow */
+    transform: scale(1.05); /* Subtle enlargement */
+}
+
+#saved-btn:active {
+    background-color: #8b4513; /* Darker shade on active */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Reduced shadow on active */
+    transform: scale(1); /* Return to original size */
 }
 #file_input_always,#file_input_on_first_spawn{
     font-size: x-large;
@@ -483,6 +699,7 @@ button.del-btn:active{
     flex-direction: column;
     gap: 10px;
     margin-left: -136px;
+    max-width: 132px;
 }
 
 .all-week-btn {
@@ -506,7 +723,6 @@ button.del-btn:active{
     background-color: #9370DB; /* Soft lavender for active state */
     transform: scale(0.94); /* Slight shrink effect */
 }
-
 
 .delete-week-btn {
     padding: 10px 16px;
@@ -593,9 +809,6 @@ button.del-btn:active{
     padding-left: 20px;
 }
 
-
-
-
 .history{
     font-size: large;
 }
@@ -604,8 +817,232 @@ button.del-btn:active{
     border-color: black;
 }
 
+/* CSS for the Change Periods button */
+.change-periods-btn {
+    background-color: #b392bd; /* Purplish background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding for size */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Bold text */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+    white-space: pre-line; /* Allow line breaks in text */
+    text-align: center; /* Center the text */
+}
 
+/* Hover effect */
+.change-periods-btn:hover {
+    background-color: #9f7aa7; /* Slightly darker purplish shade on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
 
-/* Style for the container */
+/* Active (click) effect */
+.change-periods-btn:active {
+    background-color: #8b6a94; /* Even darker purplish shade when clicked */
+    transform: scale(0.98); /* Slightly shrink on click */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduce shadow */
+}
 
+.popup-container {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    display: none; /* Initially hidden */
+    z-index: 1000;
+}
 
+.popup-content {
+    position: relative;
+    text-align: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding-top: 0px;
+    padding-bottom: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    text-align: left; /* Ensures text inside is left-aligned */
+    max-height: 80%;
+    overflow-y: scroll;
+}
+
+#content-popup p {
+    display: inline-block; /* Makes <p> tags align side by side */
+    margin-top: 2px;
+    margin-bottom: 2px;
+    background-color: #e3e3e3; /* Alternating gray for distinction */
+    border-radius: 5px;
+    padding: 8px;
+    width: 98%;
+    margin-left: 2px;
+}
+
+/* Content Styling */
+#content-popup h2, h3, h4 {
+    margin-bottom: 10px;
+    color: #333; /* Dark text for contrast */
+}
+
+#content-popup h3 {
+    font-size: 16px;
+    font-weight: bolder;
+    color: #666;
+}
+
+#content-popup h4 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #444;
+}
+
+/* Restore Button */
+#restore-deleted {
+    background-color: #76b947; /* Soft leaf-green shade */
+    border: 2px solid #5e9c35; /* Slightly darker border */
+    color: white;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+#restore-deleted:hover {
+    background-color: #5e9c35; /* Darker shade on hover */
+    border-color: #4a812a;
+    transform: scale(1.05); /* Slight zoom */
+}
+
+#restore-deleted:active {
+    background-color: #4a812a; /* Pressed effect */
+    border-color: #3b6521;
+    transform: scale(0.95);
+}
+
+/* Popup Animation */
+#popup {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -60%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+#close-popup{
+    position: absolute; 
+    top: 10px; 
+    right: 15px; 
+    font-size: 20px; 
+    cursor: pointer;
+}
+
+#popup-overlay{
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* Base styling for all three buttons */
+.set-latest-btn, 
+.copy-day-wise, 
+.paste-day-wise {
+    background-color: #40E0D0; /* Turquoise */
+    color: white;
+    border: 2px solid #2CB1A3;
+    border-radius: 6px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 13.1px;
+    transition: all 0.3s ease-in-out;
+    font-weight: bolder;
+}
+
+/* Hover effect */
+.set-latest-btn:hover, 
+.copy-day-wise:hover, 
+.paste-day-wise:hover {
+    background-color: #2CB1A3; /* Darker turquoise */
+}
+
+/* Active effect (on click) */
+.set-latest-btn:active, 
+.copy-day-wise:active, 
+.paste-day-wise:active {
+    background-color: #1D8B86; /* Even deeper turquoise */
+    transform: scale(0.95); /* Slight shrink effect */
+}
+
+/* Styling for Show, Copy, and Paste buttons */
+#show-latest-btn, 
+#copy-latest-btn, 
+#paste-latest-btn {
+    background-color: #9060a3; /* Muted purple */
+    color: white;
+    border: 2px solid #734b80; /* Slightly darker shade */
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover effect */
+#show-latest-btn:hover, 
+#copy-latest-btn:hover, 
+#paste-latest-btn:hover {
+    background-color: #734b80; /* Deeper muted purple */
+}
+
+/* Active effect (on click) */
+#show-latest-btn:active, 
+#copy-latest-btn:active, 
+#paste-latest-btn:active {
+    background-color: #5b3a65; /* Even darker tone */
+    transform: scale(0.95); /* Subtle shrink effect */
+}
+
+#popup-btn{
+    background-color: rgb(252, 190, 74); 
+    color: white;
+    border: 4px solid rgb(245, 196, 106); /* Slightly darker shade */
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bolder;
+}
+#popup-btn:hover {
+    background-color: rgb(240, 170, 50); /* Darker shade for hover */
+    border-color: rgb(230, 160, 40); /* Adjusted border */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+#popup-btn:active {
+    background-color: rgb(220, 150, 30); /* Even darker shade for active */
+    border-color: rgb(210, 140, 20);
+    transform: scale(0.95); /* Slight press effect */
+}

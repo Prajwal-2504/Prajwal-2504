@@ -209,7 +209,6 @@ function SaveData(datatobesaved) {
     } // Set default theme if not set
     theme_in_html.textContent = main_theme;
     list_of_themes.add(main_theme);
-    validateAndTruncatethemes(list_of_themes);
     if(list_of_themes){
         dropdown.innerHTML = `
         <option value=''>Select a theme...</option>
@@ -314,7 +313,7 @@ async function MainThemeFunc(parameter){
             //alert(`Theme changed successfully to ${new_theme} for user ${main_user} ! Reloading the page to apply changes and load data under new theme.`);
             loadStoredTimetable();
         })
-        .catch((error) => {    alert('❌ Error changing theme:', error);});
+        .catch((error) => {    alert('❌ Error changing theme: '+ error);});
     }
     if(parameter === 2) {
         let new_theme = prompt('Please enter new theme name:');
@@ -353,7 +352,7 @@ async function MainThemeFunc(parameter){
             //alert(`Theme changed successfully to ${new_theme} for user ${main_user} ! Reloading the page to apply changes and load data under new theme.`);
             loadStoredTimetable();
         })
-        .catch((error) => {    alert('❌ Error adding new theme:', error);});
+        .catch((error) => {    alert('❌ Error adding new theme: '+ error);});
     }
     if(parameter === 3) {
         if(!main_theme){
@@ -403,7 +402,7 @@ async function MainThemeFunc(parameter){
             loadStoredTimetable();
         })
         .catch((error) => {
-            alert(`❌ Error changing theme: ${error}`);
+            alert(`❌ Error renaming theme: ${error}`);
         });        
     }
     if(parameter === 4) {
@@ -426,7 +425,7 @@ async function MainThemeFunc(parameter){
             //alert(`Fields deleted successfully for user ${main_user} !Reloading page to apply changes.`);
             loadStoredTimetable();
         })
-        .catch((error) => {    alert('❌ Error deleting fields:', error);});
+        .catch((error) => {    alert('❌ Error deleting fields: '+ error);});
     }
 }
 
@@ -737,6 +736,7 @@ function validateAndTruncateData(data) {
 
 function createWeeklyTables(param_timetable,monday_date,first_time) {
     //add limit of not more than 28 weektables per theme and not more than 10 themes in one account
+    try{
     let weekDate;
     if(!monday_date){
         get_starting_date();
@@ -863,6 +863,11 @@ function createWeeklyTables(param_timetable,monday_date,first_time) {
     if(convertWeekToStatus(weekSection).length) main_status_timetable.push(convertWeekToStatus(weekSection));
     document.dispatchEvent(customevent);
     //console.log(main_status_timetable);
+    }
+    catch(error){
+        alert('❌ Error loading data: '+ error);
+        return;
+    }
 }
 
 async function loadStoredTimetable(data_if_passed) {
@@ -1003,7 +1008,7 @@ async function loadStoredTimetable(data_if_passed) {
     document.dispatchEvent(customevent);
     }
     catch(error){
-        alert('❌ Error loading data:', error,'\nRedirecting to first spawn!');
+        alert('❌ Error loading data: '+ error+'\nRedirecting to first spawn!');
         return first();
     }
 }

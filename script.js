@@ -195,6 +195,7 @@ document.addEventListener('radioChange', () => {
 });
 
 function SaveData(datatobesaved) {
+    try{
     if (!uid) {
         console.error('❌ No user is signed in!');
         return;
@@ -235,8 +236,12 @@ function SaveData(datatobesaved) {
         loadStoredTimetable();
     })
     .catch((error) => {
-        console.error('❌ Error saving data:', error);
+        alert('❌ Error saving data:', error);
     });
+    }
+    catch(error){
+        alert('❌ Error saving data:', error);
+    }
 }
 
 async function RetrieveData() {
@@ -861,6 +866,7 @@ function createWeeklyTables(param_timetable,monday_date,first_time) {
 }
 
 async function loadStoredTimetable(data_if_passed) {
+    try{
     list_of_deleted = new Set();
     resetlatest();
     capitalizelatest();
@@ -995,6 +1001,11 @@ async function loadStoredTimetable(data_if_passed) {
     populateTableFromArray(latestTimetableData);
     updateAttendanceStats();
     document.dispatchEvent(customevent);
+    }
+    catch(error){
+        alert('❌ Error loading data:', error,'\nRedirecting to first spawn!');
+        return first();
+    }
 }
 
 function capitalizelatest(){

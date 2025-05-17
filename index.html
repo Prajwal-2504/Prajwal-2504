@@ -7,22 +7,63 @@
         <link rel="stylesheet" href="style.css">
         <link rel="icon" type="image/png" href="prajwal.png">
     </head>
-    <body id="mainid">
-        <h1 id="theme"></h1>
-        <div id="first-time-sign-in"></div>
-        <div id="first-time"></div>
+    <body>
+        <div id="navbar">
+            <h2 id="theme"></h2>
+            <label for="cpn" class="common-period-name" id="label">Assign a name to multiple periods (click a period, enable checkbox):</label>
+            <input type="checkbox" id="myCheckbox">
+            <input type="text" id="cpn" class="common-period-name" disabled="true">
+            <label for="status" class="stt">Set Status for Multiple Periods:</label>
+            <div id="status" class="stt">
+                <label><input type="radio" name="status" value="" checked> None</label><br>
+                <label><input type="radio" name="status" value="Present"> Present</label><br>
+                <label><input type="radio" name="status" value="Absent"> Absent</label><br>
+                <label><input type="radio" name="status" value="no-class"> Class Cancelled</label><br>
+                <label><input type="radio" name="status" value="remove"> Remove Current Status</label>
+            </div>  
+            <button class="sign-out-btn" onclick="auth.signOut()">Sign Out</button>
+        </div>
+        <div id="first-time-sign-in">
+            <p>❌ You are not signed in to the Self Attendance website. Please press the <strong>"Sign in"</strong> button.</p>
+            <button id="loginBtn" onclick="login()">Sign in with Google</button>
+        </div>
+        <div id="first-time" style="display: none;"></div>
         <table>
             <tbody id="table-container"></tbody>
         </table>
-        <button onclick="createWeeklyTables(updateSubjectsInTimetable());scrollToButtonWithOffset(this);" 
-        id="add-week-btn">Add New Week</button>
-        <div id="first-time-date"></div><br>
+        <div id="most_important">
+            <div id="themes-section" style="display: flex; gap: 16px; margin-top: 14px; margin-bottom: 14px;">
+                <select id="themeDropdown" onchange="MainThemeFunc(1)">
+                    <option value="">Select a theme...</option>
+                </select>
+                <button class="themeclass" onclick="MainThemeFunc(2)">Add new theme...</button>
+                <button class="themeclass" onclick="MainThemeFunc(3)">Rename theme...</button>
+                <button class="themeclass" onclick="MainThemeFunc(4)">Delete theme...</button>
+            </div>
+            <button onclick="createWeeklyTables(convertlatestTo2DArray(),findNextMonday());scrollToButtonWithOffset(this);" id="add-week-btn" style="margin-bottom: 16px;">Add New Week</button>
+            <button onclick="showlatest();" id="show-latest-btn" style="margin-bottom: 16px;">Show Latest Timetable</button>
+            <button onclick="copylatest();" id="copy-latest-btn" style="margin-bottom: 16px;">Copy Latest Timetable as 2D array</button>
+            <button onclick="pastelatest();" id="paste-latest-btn" style="margin-bottom: 16px;">Paste 2D array to update latest timetable</button>
+            <table id="latest-timetable" style="display: none; width: 100%;">
+                <h3 id="latest_timetable_heading" style="display: none;">Using latest timetable:</h3>
+                <thead><tr><th>Day</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
+                <tbody>
+                    <tr><th>Monday</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                    <tr><th>Tuesday</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                    <tr><th>Wednesday</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                    <tr><th>Thursday</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                    <tr><th>Friday</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                </tbody>
+            </table>
+            <div id="first-time-date"></div><br>
+        </div>
         <div id="lets-do-it">
-            <button id="attendance-btn" onclick="updateAttendanceStats()">Update Attendance and Display</button>
             <br>
-            <button onclick="SaveData(convertWeekTablesToStatus());" id="saved-btn">Save Data</button>
+            <button onclick="openPopup()" id="popup-btn">Show and restore deleted dates</button><br>
+            <button id="saved-btn" onclick="SaveData(finalizedata())">Save Data</button><br>
+            <button id="attendance-btn" onclick="updateAttendanceStats(1)">Display Attendance</button>
             <button onclick="downloadAsJSON();" id="download-btn">Download Data as JSON FILE(optional)</button>
-            <input type="file" id="file_input_always"><br><br>
+            <input type="file" id="file_input_always" onchange="file_input_always_func(event)"><br><br>
             <div id="period-container"></div>
             <div id="attendance-display-section"></div>
         </div>

@@ -196,48 +196,48 @@ document.addEventListener('radioChange', () => {
 
 function SaveData(datatobesaved) {
     try{
-    if (!uid) {
-        alert('❌ No user is signed in!');
-        return;
-    }
-    if(!main_theme){
-        main_theme = prompt('Please enter a theme name for your timetable:');
-    } // Set default theme if not set
-    if(!main_theme || main_theme.trim() === ''){
-        alert('No theme name provided. Data will not be saved.');
-        return;
-    } // Set default theme if not set
-    theme_in_html.textContent = main_theme;
-    list_of_themes.add(main_theme);
-    if(list_of_themes){
-        dropdown.innerHTML = `
-        <option value=''>Select a theme...</option>
-        `;
-        dropdown.style.display = 'block';
-        list_of_themes.forEach((theme) => {
-            const option = document.createElement('option');
-            option.value = theme;
-            option.textContent = theme;
-            dropdown.appendChild(option);
+        if (!uid) {
+            alert('❌ No user is signed in!');
+            return;
+        }
+        if(!main_theme){
+            main_theme = prompt('Please enter a theme name for your timetable:');
+        } // Set default theme if not set
+        if(!main_theme || main_theme.trim() === ''){
+            alert('No theme name provided. Data will not be saved.');
+            return;
+        } // Set default theme if not set
+        theme_in_html.textContent = main_theme;
+        list_of_themes.add(main_theme);
+        if(list_of_themes){
+            dropdown.innerHTML = `
+            <option value=''>Select a theme...</option>
+            `;
+            dropdown.style.display = 'block';
+            list_of_themes.forEach((theme) => {
+                const option = document.createElement('option');
+                option.value = theme;
+                option.textContent = theme;
+                dropdown.appendChild(option);
+            });
+        }
+        list_of_themes = validateAndTruncateThemes(list_of_themes);
+        validateAndTruncateData(datatobesaved);
+        db.collection('users').doc(uid).set({
+            theme : main_theme,
+            [`${main_theme} timetableData`]: JSON.stringify(datatobesaved),
+            [`${main_theme} latest_timetable`]: JSON.stringify(convertlatestTo2DArray()),
+            all_themes : Array.from(list_of_themes)
+        }, { merge: true })
+        .then(() => {
+            console.log('✅ Data saved successfully for user:', main_user);
+            alert(`Data saved successfully for user ${main_user} !`);
+            loadStoredTimetable();
+        })
+        .catch((error) => {
+            alert('❌ Error saving data in backend: '+ error);
         });
-    }
-    list_of_themes = validateAndTruncateThemes(list_of_themes);
-    validateAndTruncateData(datatobesaved);
-    db.collection('users').doc(uid).set({
-        theme : main_theme,
-        [`${main_theme} timetableData`]: JSON.stringify(datatobesaved),
-        [`${main_theme} latest_timetable`]: JSON.stringify(convertlatestTo2DArray()),
-        all_themes : Array.from(list_of_themes)
-    }, { merge: true })
-    .then(() => {
-        console.log('✅ Data saved successfully for user:', main_user);
-        alert(`Data saved successfully for user ${main_user} !`);
-        loadStoredTimetable();
-    })
-    .catch((error) => {
-        alert('❌ Error saving data in backend: '+ error);
-    });
-    }
+        }
     catch(error){
         alert('❌ Error saving data in main save function: '+ error);
     }
@@ -861,151 +861,150 @@ function createWeeklyTables(param_timetable,monday_date,first_time) {
     updateAttendanceStats();
     if(!main_status_timetable)  main_status_timetable = [];
     if(convertWeekToStatus(weekSection).length) main_status_timetable.push(convertWeekToStatus(weekSection));
-    document.dispatchEvent(customevent);
     //console.log(main_status_timetable);
     }
     catch(error){
-        alert('❌ Error loading data: '+ error);
+        alert('❌ Error adding new weektable: '+ error);
         return;
     }
 }
 
 async function loadStoredTimetable(data_if_passed) {
     try{
-    list_of_deleted = new Set();
-    resetlatest();
-    capitalizelatest();
-    //document.querySelector('input[name="status"][value=""]').click();
-    main_status_timetable = data_if_passed || await RetrieveData();
-    if (!main_status_timetable || main_status_timetable.length === 0) return first();
-    main_status_timetable = data_if_passed ? data_if_passed : JSON.parse(main_status_timetable[`${main_theme} timetableData`]);
-    if (!main_status_timetable || main_status_timetable.length === 0) return first();
-    //validateAndTruncateData(main_status_timetable);
-    //console.log(`Total no. of week datas in received data : ${main_status_timetable.length}`);
-    main_container.innerHTML = '';
-    //main_status_timetable.forEach(weekData => createWeeklyTables(weekData, undefined, undefined, 1));
-    validateAndTruncateData(main_status_timetable);
-    for (let i = 0; i < main_status_timetable.length; i++) {
-        let weekTable = main_status_timetable[i];
-        if(weekTable.every(row => row[row.length - 1] === "Delete")) continue;
-        let weekSection = document.createElement('tbody');
-        weekSection.className = 'table-section';
-        let isFirstSection = main_container.children.length === 0;
-        weekSection.style.marginTop = isFirstSection ? '0px' : '50px';
-        const headerRow = document.createElement('tr');
-        headerRow.className = 'week-header-row';
-        const headerDate = document.createElement('th');
-        headerDate.textContent = 'Date';
-        headerRow.appendChild(headerDate);
-        const headerDay = document.createElement('th');
-        headerDay.textContent = 'Day';
-        headerRow.appendChild(headerDay);
-        for (let head = 1; head <= weekTable[0].length - 3 ; head++) {
-            const headerPeriod = document.createElement('th');
-            headerPeriod.textContent = `${head}`;
-            headerRow.appendChild(headerPeriod);
-        }
-        weekSection.appendChild(headerRow);
-        for(let j = 0; j < weekTable.length; j++) {
-            let row = weekTable[j];
-            if(row[row.length - 1] === "Delete") continue;
-            let weekRow = document.createElement('tr');
-            weekRow.className = 'week-row';
-            const dateCell = document.createElement('td');
-            dateCell.className = 'date-cell';
-            dateCell.textContent = row[0];
-            weekRow.appendChild(dateCell);
-            const dayCell = document.createElement('td');
-            dayCell.className = 'day-cell';
-            dayCell.textContent = row[1];
-            weekRow.appendChild(dayCell);
-            for (let k = 2; k < row.length - 1; k++) {
-                const periodCell = document.createElement('td');
-                periodCell.className = 'period';
-                periodCell.textContent = Object.keys(row[k])[0].trim().toUpperCase();
-                //periodCell.contentEditable = !selectedStatus && !checkbox.checked;
-                if(Object.values(row[k])[0] !== '') periodCell.classList.add(`${Object.values(row[k])[0]}`);
-                //periodCell.onclick = () => showPeriodMenu(periodCell);
-                periodCell.onblur = () => {
-                    periodCell.textContent = periodCell.textContent.trim().toUpperCase(); // Trim and convert to uppercase
-                    if(periodCell.textContent.trim() === '')    periodCell.classList.remove('Present', 'Absent', 'no-class');
-                    updateAttendanceStats(); // Update attendance stats after renaming
+        list_of_deleted = new Set();
+        resetlatest();
+        capitalizelatest();
+        //document.querySelector('input[name="status"][value=""]').click();
+        main_status_timetable = data_if_passed || await RetrieveData();
+        if (!main_status_timetable || main_status_timetable.length === 0) return first();
+        main_status_timetable = data_if_passed ? data_if_passed : JSON.parse(main_status_timetable[`${main_theme} timetableData`]);
+        if (!main_status_timetable || main_status_timetable.length === 0) return first();
+        //validateAndTruncateData(main_status_timetable);
+        //console.log(`Total no. of week datas in received data : ${main_status_timetable.length}`);
+        main_container.innerHTML = '';
+        //main_status_timetable.forEach(weekData => createWeeklyTables(weekData, undefined, undefined, 1));
+        validateAndTruncateData(main_status_timetable);
+        for (let i = 0; i < main_status_timetable.length; i++) {
+            let weekTable = main_status_timetable[i];
+            if(weekTable.every(row => row[row.length - 1] === "Delete")) continue;
+            let weekSection = document.createElement('tbody');
+            weekSection.className = 'table-section';
+            let isFirstSection = main_container.children.length === 0;
+            weekSection.style.marginTop = isFirstSection ? '0px' : '50px';
+            const headerRow = document.createElement('tr');
+            headerRow.className = 'week-header-row';
+            const headerDate = document.createElement('th');
+            headerDate.textContent = 'Date';
+            headerRow.appendChild(headerDate);
+            const headerDay = document.createElement('th');
+            headerDay.textContent = 'Day';
+            headerRow.appendChild(headerDay);
+            for (let head = 1; head <= weekTable[0].length - 3 ; head++) {
+                const headerPeriod = document.createElement('th');
+                headerPeriod.textContent = `${head}`;
+                headerRow.appendChild(headerPeriod);
+            }
+            weekSection.appendChild(headerRow);
+            for(let j = 0; j < weekTable.length; j++) {
+                let row = weekTable[j];
+                if(row[row.length - 1] === "Delete") continue;
+                let weekRow = document.createElement('tr');
+                weekRow.className = 'week-row';
+                const dateCell = document.createElement('td');
+                dateCell.className = 'date-cell';
+                dateCell.textContent = row[0];
+                weekRow.appendChild(dateCell);
+                const dayCell = document.createElement('td');
+                dayCell.className = 'day-cell';
+                dayCell.textContent = row[1];
+                weekRow.appendChild(dayCell);
+                for (let k = 2; k < row.length - 1; k++) {
+                    const periodCell = document.createElement('td');
+                    periodCell.className = 'period';
+                    periodCell.textContent = Object.keys(row[k])[0].trim().toUpperCase();
+                    //periodCell.contentEditable = !selectedStatus && !checkbox.checked;
+                    if(Object.values(row[k])[0] !== '') periodCell.classList.add(`${Object.values(row[k])[0]}`);
+                    //periodCell.onclick = () => showPeriodMenu(periodCell);
+                    periodCell.onblur = () => {
+                        periodCell.textContent = periodCell.textContent.trim().toUpperCase(); // Trim and convert to uppercase
+                        if(periodCell.textContent.trim() === '')    periodCell.classList.remove('Present', 'Absent', 'no-class');
+                        updateAttendanceStats(); // Update attendance stats after renaming
+                    }
+                    weekRow.appendChild(periodCell);
                 }
-                weekRow.appendChild(periodCell);
+                const allCell = document.createElement('td');
+                allCell.className = 'all-cell';
+                allCell.innerHTML = "<button class='all-btn'>All</button>";
+                //allCell.style.display = document.querySelector('input[name="status"]:checked').value === '' ? 'none' : '';
+                weekRow.appendChild(allCell);
+                const deleteCell = document.createElement('td');
+                deleteCell.innerHTML = `<button class='del-btn' onclick='deleteDay(this)'>Delete</button>`;
+                deleteCell.className = 'delete-cell';
+                weekRow.appendChild(deleteCell);
+                weekSection.appendChild(weekRow);
             }
-            const allCell = document.createElement('td');
-            allCell.className = 'all-cell';
-            allCell.innerHTML = "<button class='all-btn'>All</button>";
-            //allCell.style.display = document.querySelector('input[name="status"]:checked').value === '' ? 'none' : '';
-            weekRow.appendChild(allCell);
-            const deleteCell = document.createElement('td');
-            deleteCell.innerHTML = `<button class='del-btn' onclick='deleteDay(this)'>Delete</button>`;
-            deleteCell.className = 'delete-cell';
-            weekRow.appendChild(deleteCell);
-            weekSection.appendChild(weekRow);
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'week-buttons';
+    
+            const button1 = document.createElement('button');
+            button1.textContent = 'All Week';
+            button1.className = 'all-week-btn';
+            //button1.style.display = document.querySelector('input[name="status"]:checked').value === '' ? 'none' : '';
+            //button1.onclick = function() {    showAllWeekMenu(button1, weekSection);};
+    
+            const button2 = document.createElement('button');
+            button2.textContent = 'Delete Week';
+            button2.className = 'delete-week-btn';
+            button2.onclick = function() {    deleteAllWeek(weekSection)};
+    
+            buttonContainer.appendChild(button1);
+            buttonContainer.appendChild(button2);
+            
+            //buttonContainer.appendChild(changePeriodsButton);
+            
+            const setaslatest = document.createElement('button');
+            setaslatest.textContent = 'Set as latest';
+            setaslatest.className = 'set-latest-btn';
+            setaslatest.onclick = () => setAsLatest(weekSection);
+            buttonContainer.appendChild(setaslatest);
+    
+            const copydaywise = document.createElement('button');
+            copydaywise.textContent = 'Copy day wise status of weektable';
+            copydaywise.className = 'copy-day-wise';
+            copydaywise.onclick = () => converttableto2Darraydictstatus(weekSection);
+            buttonContainer.appendChild(copydaywise);
+            
+            const pastedaywise = document.createElement('button');
+            pastedaywise.textContent = 'Paste and update day wise status of weektable';
+            pastedaywise.className = 'paste-day-wise';
+            pastedaywise.onclick = () => updatestatustoweektable(weekSection);
+            buttonContainer.appendChild(pastedaywise);
+    
+            weekSection.insertBefore(buttonContainer,weekSection.firstChild);
+            main_container.appendChild(weekSection);
         }
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'week-buttons';
-
-        const button1 = document.createElement('button');
-        button1.textContent = 'All Week';
-        button1.className = 'all-week-btn';
-        //button1.style.display = document.querySelector('input[name="status"]:checked').value === '' ? 'none' : '';
-        //button1.onclick = function() {    showAllWeekMenu(button1, weekSection);};
-
-        const button2 = document.createElement('button');
-        button2.textContent = 'Delete Week';
-        button2.className = 'delete-week-btn';
-        button2.onclick = function() {    deleteAllWeek(weekSection)};
-
-        buttonContainer.appendChild(button1);
-        buttonContainer.appendChild(button2);
-        
-        //buttonContainer.appendChild(changePeriodsButton);
-        
-        const setaslatest = document.createElement('button');
-        setaslatest.textContent = 'Set as latest';
-        setaslatest.className = 'set-latest-btn';
-        setaslatest.onclick = () => setAsLatest(weekSection);
-        buttonContainer.appendChild(setaslatest);
-
-        const copydaywise = document.createElement('button');
-        copydaywise.textContent = 'Copy day wise status of weektable';
-        copydaywise.className = 'copy-day-wise';
-        copydaywise.onclick = () => converttableto2Darraydictstatus(weekSection);
-        buttonContainer.appendChild(copydaywise);
-        
-        const pastedaywise = document.createElement('button');
-        pastedaywise.textContent = 'Paste and update day wise status of weektable';
-        pastedaywise.className = 'paste-day-wise';
-        pastedaywise.onclick = () => updatestatustoweektable(weekSection);
-        buttonContainer.appendChild(pastedaywise);
-
-        weekSection.insertBefore(buttonContainer,weekSection.firstChild);
-        main_container.appendChild(weekSection);
-    }
-    if (!document.querySelectorAll('.week-row').length) return first();
-    //showlatest();
-    //resetlatest();
-    First.style.display = "none";
-    change_date.innerHTML = '';
-    change_date.style.display = 'none';
-
-    for(let i=0;i<main_status_timetable.length;i++){
-        for(let j=0;j<main_status_timetable[i].length;j++){
-            let dayrow = main_status_timetable[i][j];
-            if(dayrow[dayrow.length - 1] === 'Delete'){
-                list_of_deleted.add(dayrow[0]);
+        if (!document.querySelectorAll('.week-row').length) return first();
+        //showlatest();
+        //resetlatest();
+        First.style.display = "none";
+        change_date.innerHTML = '';
+        change_date.style.display = 'none';
+    
+        for(let i=0;i<main_status_timetable.length;i++){
+            for(let j=0;j<main_status_timetable[i].length;j++){
+                let dayrow = main_status_timetable[i][j];
+                if(dayrow[dayrow.length - 1] === 'Delete'){
+                    list_of_deleted.add(dayrow[0]);
+                }
             }
         }
-    }
-    Object.assign(nav.style, { display: 'flex' });
-    Object.assign(most_imp.style, { display: 'block' });
-    Object.assign(imp.style, { display: 'block' });
-    attendance.style.display = 'none';
-    populateTableFromArray(latestTimetableData);
-    updateAttendanceStats();
-    document.dispatchEvent(customevent);
+        Object.assign(nav.style, { display: 'flex' });
+        Object.assign(most_imp.style, { display: 'block' });
+        Object.assign(imp.style, { display: 'block' });
+        attendance.style.display = 'none';
+        scrollToButtonWithOffset(document.getElementById('add-week-btn'));
+        populateTableFromArray(latestTimetableData);
+        updateAttendanceStats();
     }
     catch(error){
         alert('❌ Error loading data: '+ error+'\nRedirecting to first spawn!');
@@ -1260,8 +1259,8 @@ function displaySubjects() {
 }
 
 function updateAttendanceStats(button_clicked) {
+    document.dispatchEvent(customevent);
     let subjectsAttendance = {};
-
     let all_subjects = displaySubjects();
     attendance.innerHTML = '';
     attendance.style.backgroundColor = 'white';

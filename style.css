@@ -1045,3 +1045,16 @@ button.del-btn:active{
     border-color: rgb(210, 140, 20);
     transform: scale(0.95); /* Slight press effect */
 }
+
+
+@media (max-width: 768px) {
+  #navbar{
+    height: 200px;
+  }
+  .stt{
+    font-size: 40px;
+  }
+  body{
+    margin-top: 210px;
+  }
+}

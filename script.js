@@ -12,7 +12,30 @@ firebase.analytics();
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 const db = firebase.firestore();
+function applyMobileStyles() {
+    let viewportWidth = document.documentElement.clientWidth;
+    let viewportHeight = document.documentElement.clientHeight;
 
+    console.log(`Viewport size: ${viewportWidth} * ${viewportHeight}`);
+
+    //let mediaQuery = window.matchMedia("(max-width: 768px)");
+
+    if (viewportWidth <= 768) {
+        document.querySelectorAll(".stt").forEach(el => {
+            el.style.setProperty("font-size", "40px", "important"); // Overrides all
+        });
+
+        document.getElementById("navbar").style.setProperty("height", "200px", "important"); // Force height
+        document.body.style.setProperty("margin-top", "210px", "important"); // Body margin
+    } else {
+        document.querySelectorAll(".stt").forEach(el => {
+            el.style.removeProperty("font-size"); // Reset to CSS defaults
+        });
+
+        document.getElementById("navbar").style.removeProperty("height");
+        document.body.style.removeProperty("margin-top");
+    }
+}
 const theme_in_html = document.getElementById('theme');
 const nav = document.getElementById('navbar');
 const imp = document.getElementById('lets-do-it');
@@ -870,6 +893,7 @@ function createWeeklyTables(param_timetable,monday_date,first_time) {
 }
 
 async function loadStoredTimetable(data_if_passed) {
+    applyMobileStyles();
     try{
         list_of_deleted = new Set();
         resetlatest();

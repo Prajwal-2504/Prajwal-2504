@@ -45,8 +45,7 @@ body {
     z-index: 100;
     background-color: bisque;
     display: none; /* Initially hidden */
-    min-height: 90px;
-    max-height: 100px;
+    height: 100px;
     overflow-x: auto; 
     overflow-y: auto;
 }

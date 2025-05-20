@@ -3,63 +3,42 @@ body {
     background-color: #f9f9f9;
     margin-left: 170px;
     margin-right: 150px;
-    margin-top: 105px; /* Space from the top */
-}
-#status{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 4 columns layout */
-}
-#change-start-date-btn {
-    background-color: #4CAF50; /* Green background */
-    color: white; /* White text */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    padding: 10px 20px; /* Padding for size */
-    font-size: 16px; /* Font size */
-    font-weight: bold; /* Bold text */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-#change-start-date-btn:hover {
-    background-color: #45a049; /* Darker green on hover */
-    transform: scale(1.05); /* Slight zoom effect */
-}
-
-#change-start-date-btn:active {
-    background-color: #3e8e41; /* Even darker green when clicked */
-    transform: scale(0.98); /* Slight shrink effect */
-}
-
-#change-start-date-btn:focus {
-    outline: none; /* Remove default focus outline */
-    box-shadow: 0 0 0 3px rgba(72, 239, 128, 0.5); /* Add custom focus outline */
+    margin-top: 108px; /* Space from the top */
 }
 #navbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    padding: 0.5px 40px 0.5px 0px; /* Padding for spacing */
+    padding-top: 8px;
+    padding-right: 25px;
+    padding-bottom: 1px;
+    padding-left: 20px;
     z-index: 100;
     background-color: bisque;
     display: none; /* Initially hidden */
-    height: 100px;
+    height: 95px;
     overflow-x: auto; 
     overflow-y: auto;
 }
 #theme{
-    font-size: 25px;
-    font-weight: 700;
-    margin-top: 5px;
-    margin-left: 20px;
+    height: 20px;
+    margin-top: -3px;
+}
+.common-period-name{
+    height: 20px;
+    margin-right: 8px;
+}
+#status{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 4 columns layout */
+    height: 16px;
+    font-size: 20px;
 }
 .sign-out-btn {
     background-color: #737feb;
     color: white;
     border: none;
-    margin: 8px;
     font-size: 20px;
     font-weight: bold;
     border-radius: 5px;
@@ -67,6 +46,8 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
     outline: none;
+    margin-bottom: 8px;
+    margin-left: 8px;
 }
 
 /* Hover state */
@@ -81,14 +62,6 @@ body {
     background-color: #4953a7; 
     transform: scale(0.97);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-.common-period-name{
-    height: 20px;
-    margin-top: 10px;
-}
-.stt{
-    height: 16px;
-    margin-top: 10px;
 }
 #lets-do-it{
     margin-top: 0px;
@@ -505,6 +478,8 @@ th, td {
 }
 .period{
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
 }
 .Present { background-color: rgb(79, 221, 112); }
 .Absent { background-color: rgb(243, 94, 107); }
@@ -1044,17 +1019,4 @@ button.del-btn:active{
     background-color: rgb(220, 150, 30); /* Even darker shade for active */
     border-color: rgb(210, 140, 20);
     transform: scale(0.95); /* Slight press effect */
-}
-
-
-@media (max-width: 768px) {
-  #navbar{
-    height: 200px;
-  }
-  .stt{
-    font-size: 40px;
-  }
-  body{
-    margin-top: 210px;
-  }
 }

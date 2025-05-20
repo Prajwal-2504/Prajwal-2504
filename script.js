@@ -12,30 +12,7 @@ firebase.analytics();
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 const db = firebase.firestore();
-function applyMobileStyles() {
-    let viewportWidth = document.documentElement.clientWidth;
-    let viewportHeight = document.documentElement.clientHeight;
 
-    console.log(`Viewport size: ${viewportWidth} * ${viewportHeight}`);
-
-    //let mediaQuery = window.matchMedia("(max-width: 768px)");
-
-    if (viewportWidth <= 768) {
-        document.querySelectorAll(".stt").forEach(el => {
-            el.style.setProperty("font-size", "40px", "important"); // Overrides all
-        });
-
-        document.getElementById("navbar").style.setProperty("height", "200px", "important"); // Force height
-        document.body.style.setProperty("margin-top", "210px", "important"); // Body margin
-    } else {
-        document.querySelectorAll(".stt").forEach(el => {
-            el.style.removeProperty("font-size"); // Reset to CSS defaults
-        });
-
-        document.getElementById("navbar").style.removeProperty("height");
-        document.body.style.removeProperty("margin-top");
-    }
-}
 const theme_in_html = document.getElementById('theme');
 const nav = document.getElementById('navbar');
 const imp = document.getElementById('lets-do-it');
@@ -64,7 +41,7 @@ function login() {
         <option value=''>Select a theme...</option>
         `;
         fts.style.display = 'none';
-        loadStoredTimetable(); // Load data now that user is signed in
+        loadStoredTimetable(undefined,1); // Load data now that user is signed in
     })
     .catch((error) => {
         alert(`❌ Login failed: ${error.message}`);
@@ -75,7 +52,7 @@ auth.onAuthStateChanged((user) => {
     main_user = user.displayName;
     uid = user.uid;
     console.log('✅ Already signed in:', main_user);
-    loadStoredTimetable();
+    loadStoredTimetable(undefined,1);
   } else {
     console.log('👋 Not signed in. Triggering login...');
     main_container.innerHTML = '';
@@ -106,7 +83,7 @@ const radios = document.querySelectorAll("input[name='status']");
 const customevent = new CustomEvent('radioChange');
 const attendance = document.getElementById('attendance-display-section');
 const attbtn = document.getElementById('attendance-btn');
-
+const checkevent = new CustomEvent('checkchange');
 radios.forEach(radio => {
   radio.addEventListener('change', function () {
     selectedStatus = document.querySelector('input[name="status"]:checked')?.value;
@@ -122,7 +99,7 @@ let renameHandler = function(e) {
 
         // Disable editing and set the name
         periodCell.contentEditable = false;
-        periodCell.textContent = newName.toUpperCase(); // Set the new name in uppercase
+        periodCell.textContent = newName.toUpperCase().slice(0, 100); // Set the new name in uppercase
 
         // If empty, remove status classes
         if (newName === '')    periodCell.classList.remove('Present', 'Absent', 'no-class');
@@ -139,62 +116,56 @@ let clickHandler = function(e) {
         if(!periodCell.textContent.trim()) return; // Ignore empty cells
         if (selectedStatus === 'remove') return;
         periodCell.classList.add(selectedStatus);
-        updateAttendanceStats(); // Update attendance stats after clicking
     }
     else if(allbtn){
         const row = allbtn.closest('.week-row');
         row.querySelectorAll('.period').forEach((periodCell) => {
-            if (periodCell.textContent.trim() !== '') {
-                periodCell.classList.remove('Present', 'Absent', 'no-class');
-                if (selectedStatus !== 'remove')    periodCell.classList.add(selectedStatus);
+            periodCell.classList.remove('Present', 'Absent', 'no-class');
+            if (periodCell.textContent.trim() !== '' && selectedStatus !== 'remove') {
+                periodCell.classList.add(selectedStatus);
             }
         });
-        updateAttendanceStats(); // Update attendance stats after clicking
     }
     else if(allweekbtn){
         const table = allweekbtn.closest('.table-section');
         table.querySelectorAll('.period').forEach((periodCell) => {
-            if (periodCell.textContent.trim() !== '') {
-                periodCell.classList.remove('Present', 'Absent', 'no-class');
-                if (selectedStatus !== 'remove')    periodCell.classList.add(selectedStatus);
+            periodCell.classList.remove('Present', 'Absent', 'no-class');
+            if (periodCell.textContent.trim() !== '' && selectedStatus !== 'remove') {
+                periodCell.classList.add(selectedStatus);
             }
         });
-        updateAttendanceStats(); // Update attendance stats after clicking
     }
+    if(periodCell || allbtn || allweekbtn)    updateAttendanceStats(); // Update attendance stats after clicking
 };
 
 checkbox.addEventListener('change', () => {
-    //document.querySelector("input[value='']").checked = true;
+    //alert(checkbox.checked);
+    document.querySelector("input[name='status'][value='']").checked = true;
+    document.dispatchEvent(customevent);
     // Reset the status select when checkbox is checked/unchecked
-    document.querySelector('input[name="status"][value=""]').click();
-
-    const periodCells = document.querySelectorAll('.period');
-    let allCells = document.querySelectorAll('.all-cell');
-    let allweekcells = document.querySelectorAll('.all-week-btn');
-    allCells.forEach(cell => cell.style.display = 'none');
-    allweekcells.forEach(cell => cell.style.display = 'none');
-
+    //document.querySelector('input[name="status"][value=""]').click();
+    
     document.removeEventListener('click', clickHandler); // Remove click handler
     const isChecked = checkbox.checked;
     input.disabled = !isChecked;
     input.value = ''; // Clear the input field when checkbox is checked/unchecked
-
+    const periodCells = document.querySelectorAll('.period');
     if (isChecked) {
         input.focus();
         // Disable editing and attach the handler
         periodCells.forEach(cell => cell.contentEditable = false);
+        document.removeEventListener('click',clickHandler);
         document.addEventListener('click', renameHandler);
     } else {
         // Enable editing and remove the handler
         periodCells.forEach(cell => cell.contentEditable = true);
+        document.removeEventListener('click',clickHandler);
         document.removeEventListener('click', renameHandler);
     }
 });
+
 document.addEventListener('radioChange', () => {
-    checkbox.checked = false; // Uncheck the checkbox when status changes
-    input.disabled = true; // Disable the input field
-    input.value = ''; // Clear the input field when status changes
-    document.removeEventListener('click', renameHandler); // Remove rename handler
+    //document.removeEventListener('click', renameHandler); // Remove rename handler
     selectedStatus = document.querySelector("input[name='status']:checked").value;
     
     const periodCells = document.querySelectorAll('.period');
@@ -203,16 +174,19 @@ document.addEventListener('radioChange', () => {
 
     if (selectedStatus === '') {
         // Enable contentEditable and remove event listener
-        periodCells.forEach(cell => cell.contentEditable = true);
+        if(!checkbox.checked)   periodCells.forEach(cell => cell.contentEditable = true);
         allCells.forEach(cell => cell.style.display = 'none');
         allweekcells.forEach(cell => cell.style.display = 'none');
         document.removeEventListener('click', clickHandler);
     } else {
         // Disable contentEditable and add click handler
+        checkbox.checked = false; // Uncheck the checkbox when status changes
+        input.disabled = true; // Disable the input field
+        input.value = ''; // Clear the input field when status changes
         periodCells.forEach(cell => cell.contentEditable = false);
         allCells.forEach(cell =>    cell.style.display = '');
         allweekcells.forEach(cell =>    cell.style.display = '');
-        document.removeEventListener('click', clickHandler); // Remove if already added
+        document.removeEventListener('click',renameHandler);
         document.addEventListener('click', clickHandler);
     }
 });
@@ -220,7 +194,8 @@ document.addEventListener('radioChange', () => {
 function SaveData(datatobesaved) {
     try{
         if (!uid) {
-            alert('❌ No user is signed in!');
+            console.error('❌ No user is signed in!');
+            login();
             return;
         }
         if(!main_theme){
@@ -258,11 +233,11 @@ function SaveData(datatobesaved) {
             loadStoredTimetable();
         })
         .catch((error) => {
-            alert('❌ Error saving data in backend: '+ error);
+            alert(`❌ Error writing data to backend: ${error}`);
         });
-        }
+    }
     catch(error){
-        alert('❌ Error saving data in main save function: '+ error);
+        alert(`❌ Error saving data: ${error}`);
     }
 }
 
@@ -336,7 +311,7 @@ async function MainThemeFunc(parameter){
             //alert(`Theme changed successfully to ${new_theme} for user ${main_user} ! Reloading the page to apply changes and load data under new theme.`);
             loadStoredTimetable();
         })
-        .catch((error) => {    alert('❌ Error changing theme: '+ error);});
+        .catch((error) => {    alert(`❌ Error changing theme: ${error}`);});
     }
     if(parameter === 2) {
         let new_theme = prompt('Please enter new theme name:');
@@ -375,7 +350,7 @@ async function MainThemeFunc(parameter){
             //alert(`Theme changed successfully to ${new_theme} for user ${main_user} ! Reloading the page to apply changes and load data under new theme.`);
             loadStoredTimetable();
         })
-        .catch((error) => {    alert('❌ Error adding new theme: '+ error);});
+        .catch((error) => {    alert(`❌ Error adding new theme: ${error}`);});
     }
     if(parameter === 3) {
         if(!main_theme){
@@ -425,7 +400,7 @@ async function MainThemeFunc(parameter){
             loadStoredTimetable();
         })
         .catch((error) => {
-            alert(`❌ Error renaming theme: ${error}`);
+            alert(`❌ Error changing theme: ${error}`);
         });        
     }
     if(parameter === 4) {
@@ -448,7 +423,7 @@ async function MainThemeFunc(parameter){
             //alert(`Fields deleted successfully for user ${main_user} !Reloading page to apply changes.`);
             loadStoredTimetable();
         })
-        .catch((error) => {    alert('❌ Error deleting fields: '+ error);});
+        .catch((error) => {    alert(`❌ Error deleting fields: ${error}`);});
     }
 }
 
@@ -469,10 +444,9 @@ function file_input_first(event) {
                 alert('Data retrieved successfully');
                 main_container.innerHTML = '';
                 remove_first();
-                loadStoredTimetable(main_status_timetable);
+                loadStoredTimetable(main_status_timetable,1);
             } catch (error) {
-                console.error('Error parsing the JSON file:', error);
-                alert('Failed to parse the JSON file.');
+                alert(`Failed to parse the JSON file : ${error}`);
             }
         };
         reader.readAsText(file);
@@ -496,16 +470,14 @@ function file_input_always_func(event) {
 
                 attendance.style.display = 'none';
 
-                loadStoredTimetable(main_status_timetable);
+                loadStoredTimetable(main_status_timetable,1);
             } catch (error) {
-                console.error('Error parsing the JSON file:', error);
-                alert('Failed to parse the JSON file.');
+                alert(`Failed to parse the JSON file : ${error}`);
             }
         };
 
         reader.onerror = function(error) {
-            console.error('Error reading the file:', error);
-            alert('There was a problem reading the file.');
+            alert(`There was a problem reading the file : ${error}`);
         };
 
         reader.readAsText(file); 
@@ -759,7 +731,6 @@ function validateAndTruncateData(data) {
 
 function createWeeklyTables(param_timetable,monday_date,first_time) {
     //add limit of not more than 28 weektables per theme and not more than 10 themes in one account
-    try{
     let weekDate;
     if(!monday_date){
         get_starting_date();
@@ -820,13 +791,13 @@ function createWeeklyTables(param_timetable,monday_date,first_time) {
         for (let j = 0; j < param_timetable[i].length; j++) {
             const periodCell = document.createElement('td');
             periodCell.className = 'period';
-            periodCell.textContent = `${param_timetable[i][j].trim().toUpperCase()}`;
+            periodCell.textContent = `${param_timetable[i][j].trim().toUpperCase().slice(0, 100)}`;
             //periodCell.contentEditable = !selectedStatus && !checkbox.checked;
             //periodCell.onclick = () => showPeriodMenu(periodCell);
             periodCell.onblur = () => {
                 periodCell.textContent = periodCell.textContent.trim().toUpperCase(); // Trim and convert to uppercase
                 if(periodCell.textContent.trim() === '')    periodCell.classList.remove('Present', 'Absent', 'no-class');
-                updateAttendanceStats(); // Update attendance stats after renaming
+                //updateAttendanceStats(); // Update attendance stats after renaming
             }
             dayRow.appendChild(periodCell);
         }
@@ -885,15 +856,9 @@ function createWeeklyTables(param_timetable,monday_date,first_time) {
     if(!main_status_timetable)  main_status_timetable = [];
     if(convertWeekToStatus(weekSection).length) main_status_timetable.push(convertWeekToStatus(weekSection));
     //console.log(main_status_timetable);
-    }
-    catch(error){
-        alert('❌ Error adding new weektable: '+ error);
-        return;
-    }
 }
 
-async function loadStoredTimetable(data_if_passed) {
-    applyMobileStyles();
+async function loadStoredTimetable(data_if_passed,onload) {
     try{
         list_of_deleted = new Set();
         resetlatest();
@@ -945,14 +910,14 @@ async function loadStoredTimetable(data_if_passed) {
                 for (let k = 2; k < row.length - 1; k++) {
                     const periodCell = document.createElement('td');
                     periodCell.className = 'period';
-                    periodCell.textContent = Object.keys(row[k])[0].trim().toUpperCase();
+                    periodCell.textContent = Object.keys(row[k])[0].trim().toUpperCase().slice(0, 100);
                     //periodCell.contentEditable = !selectedStatus && !checkbox.checked;
                     if(Object.values(row[k])[0] !== '') periodCell.classList.add(`${Object.values(row[k])[0]}`);
                     //periodCell.onclick = () => showPeriodMenu(periodCell);
                     periodCell.onblur = () => {
-                        periodCell.textContent = periodCell.textContent.trim().toUpperCase(); // Trim and convert to uppercase
+                        periodCell.textContent = periodCell.textContent.trim().toUpperCase().slice(0, 100); // Trim and convert to uppercase
                         if(periodCell.textContent.trim() === '')    periodCell.classList.remove('Present', 'Absent', 'no-class');
-                        updateAttendanceStats(); // Update attendance stats after renaming
+                        //updateAttendanceStats(); // Update attendance stats after renaming
                     }
                     weekRow.appendChild(periodCell);
                 }
@@ -969,18 +934,18 @@ async function loadStoredTimetable(data_if_passed) {
             }
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'week-buttons';
-    
+
             const button1 = document.createElement('button');
             button1.textContent = 'All Week';
             button1.className = 'all-week-btn';
             //button1.style.display = document.querySelector('input[name="status"]:checked').value === '' ? 'none' : '';
             //button1.onclick = function() {    showAllWeekMenu(button1, weekSection);};
-    
+
             const button2 = document.createElement('button');
             button2.textContent = 'Delete Week';
             button2.className = 'delete-week-btn';
             button2.onclick = function() {    deleteAllWeek(weekSection)};
-    
+
             buttonContainer.appendChild(button1);
             buttonContainer.appendChild(button2);
             
@@ -991,7 +956,7 @@ async function loadStoredTimetable(data_if_passed) {
             setaslatest.className = 'set-latest-btn';
             setaslatest.onclick = () => setAsLatest(weekSection);
             buttonContainer.appendChild(setaslatest);
-    
+
             const copydaywise = document.createElement('button');
             copydaywise.textContent = 'Copy day wise status of weektable';
             copydaywise.className = 'copy-day-wise';
@@ -1003,7 +968,7 @@ async function loadStoredTimetable(data_if_passed) {
             pastedaywise.className = 'paste-day-wise';
             pastedaywise.onclick = () => updatestatustoweektable(weekSection);
             buttonContainer.appendChild(pastedaywise);
-    
+
             weekSection.insertBefore(buttonContainer,weekSection.firstChild);
             main_container.appendChild(weekSection);
         }
@@ -1013,7 +978,7 @@ async function loadStoredTimetable(data_if_passed) {
         First.style.display = "none";
         change_date.innerHTML = '';
         change_date.style.display = 'none';
-    
+
         for(let i=0;i<main_status_timetable.length;i++){
             for(let j=0;j<main_status_timetable[i].length;j++){
                 let dayrow = main_status_timetable[i][j];
@@ -1026,22 +991,22 @@ async function loadStoredTimetable(data_if_passed) {
         Object.assign(most_imp.style, { display: 'block' });
         Object.assign(imp.style, { display: 'block' });
         attendance.style.display = 'none';
-        scrollToButtonWithOffset(document.getElementById('add-week-btn'));
         populateTableFromArray(latestTimetableData);
         updateAttendanceStats();
+        if(onload)  scrollToButtonWithOffset(document.getElementById('add-week-btn'));
     }
     catch(error){
-        alert('❌ Error loading data: '+ error+'\nRedirecting to first spawn!');
+        alert(`❌ Error loading data to html page: ${error}\nRedirecting to first spawn`);
         return first();
-    }
+    };
 }
 
 function capitalizelatest(){
     latestTimetable.querySelectorAll('td').forEach((cell) => {
         cell.textContent = cell.textContent.trim().toUpperCase();
         cell.onblur = () => {
-            cell.textContent = cell.textContent.trim().toUpperCase();
-            updateAttendanceStats();
+            cell.textContent = cell.textContent.trim().toUpperCase().slice(0, 100);
+            //updateAttendanceStats();
         }
     });
     updateAttendanceStats();
@@ -1081,6 +1046,7 @@ function converttableto2Darraydictstatus(weektable) {
             } else if (cell.classList.contains('no-class')) {
                 periodStatus = 'no-class';
             }
+            if(!subject)    periodStatus='';
             periods.push({ [subject]: periodStatus });
         });
         weekData[day] = periods;
@@ -1090,7 +1056,7 @@ function converttableto2Darraydictstatus(weektable) {
         alert("Text copied to clipboard!");
         updateAttendanceStats();
     })
-    .catch(err => {    console.error("Failed to copy: ", err);});
+    .catch(error => {    alert(`Failed to copy: ${error}`);});
 }
 
 function copylatest(){
@@ -1099,7 +1065,7 @@ function copylatest(){
         alert("Text copied to clipboard!");
         updateAttendanceStats();
     })
-    .catch(err => {    console.error("Failed to copy: ", err);});
+    .catch(error => {    alert(`Failed to copy: ${error}`);});
 }
 
 function pastelatest(){
@@ -1117,14 +1083,16 @@ function pastelatest(){
                 const cell = row[j];
                 const celldata = statusrow[j];
                 if(cell && celldata){
-                    cell.textContent = celldata.trim();
+                    cell.textContent = celldata.trim().toUpperCase().slice(0, 100);
                 }
             }
         }
-        updateAttendanceStats();
     }
     catch(error){
         alert(`An error occured : ${error}`);
+    }
+    finally{
+        updateAttendanceStats();
     }
 }
 
@@ -1147,17 +1115,20 @@ function updatestatustoweektable(weektable) {
                     if (periods[j]) { // Ensure period exists before modifying
                         const key = Object.keys(dayvalue[j])[0];
                         const value = Object.values(dayvalue[j])[0];
-                        periods[j].textContent = key.trim();
+                        periods[j].textContent = key.trim().toUpperCase().slice(0, 100);
                         periods[j].classList.remove('Present', 'Absent', 'no-class');
+                        if(!periods[j].textContent) value='';
                         if (value !== '') periods[j].classList.add(value);
                     }
                 }
             }
         }
-        updateAttendanceStats();
     }
     catch(error){
         alert(`An error occured : ${error}`);
+    }
+    finally{
+        updateAttendanceStats();
     }
 }
 
@@ -1193,11 +1164,6 @@ function populateTableFromArray(tableArray) {
 
 function setAsLatest(weekSection) {
     let weekData = converttableto2Darraydict(weekSection);
-    if (!latestTimetable) {
-        console.error("Table structure missing!");
-        return;
-    }
-
     const rows = latestTimetable.querySelectorAll("tbody tr"); // Select all rows
 
     rows.forEach(row => {
@@ -1245,6 +1211,7 @@ function displaySubjects() {
     let uniquePeriodNames = new Set(); 
     document.querySelectorAll('.period').forEach((cell) => {
         let periodName = cell.textContent.trim();
+        if(periodName.length > 100) cell.textContent = periodName.slice(0, 100);
         if (periodName) uniquePeriodNames.add(periodName);
     });
     uniquePeriodNames = Array.from(uniquePeriodNames);
@@ -1283,7 +1250,10 @@ function displaySubjects() {
 }
 
 function updateAttendanceStats(button_clicked) {
+    
     document.dispatchEvent(customevent);
+    finalizedata();
+    
     let subjectsAttendance = {};
     let all_subjects = displaySubjects();
     attendance.innerHTML = '';
@@ -1486,11 +1456,29 @@ function deleteAllWeek(weekTable) {
     //addtodeleted(`${startDate} - ${endDate}`,convertWeekToStatus(weekTable));
     outerloop : for(let k=0;k<rowdates.length;k++){
         let date = rowdates[k];
+        let periods = rows[k].querySelectorAll('.period');
         midloop : for(let i=0;i<main_status_timetable.length;i++){
             for(let j=0;j<main_status_timetable[i].length;j++){
                 let dayrow = main_status_timetable[i][j];
                 if(dayrow[0] === date){
                     dayrow[dayrow.length - 1] = 'Delete';
+                    for(let k=2;k<dayrow.length-1;k++){
+                        let periodCell = periods[k-2];
+                        let periodName = periodCell.textContent.trim(); 
+                        let periodStatus = ''; 
+
+                        if (periodCell.classList.contains('Present')) {
+                            periodStatus = 'Present';
+                        } else if (periodCell.classList.contains('Absent')) {
+                            periodStatus = 'Absent';
+                        } else if (periodCell.classList.contains('no-class')) {
+                            periodStatus = 'no-class';
+                        }
+                        if(!periodName) periodStatus = '';
+                        periodName.slice(0, 100);
+                        dayrow[k] = { [periodName]: periodStatus };   
+
+                    }
                     list_of_deleted.add(dayrow[0]);
                     break midloop;
                 }
@@ -1499,29 +1487,45 @@ function deleteAllWeek(weekTable) {
     }
     loadStoredTimetable(main_status_timetable);
     //weekTable.remove(); 
-    displaySubjects();
-    check_out();
+    updateAttendanceStats();
 }
 
 function deleteDay(cell) {
     let row = cell.closest('.week-row');
     let date = row.querySelector('.date-cell').textContent;
     let day = row.querySelector('.day-cell').textContent;
+    let periods = row.querySelectorAll('.period');
     let askbeforedelete = confirm(`Are you sure you want to delete Attendance of date ${date} (${day})?`);
     if(!askbeforedelete)    return;
-    let rows = row.closest('.table-section'); 
     outerloop : for(let i=0;i<main_status_timetable.length;i++){
         for(let j=0;j<main_status_timetable[i].length;j++){
             let dayrow = main_status_timetable[i][j];
             if(dayrow[0] === date){
                 dayrow[dayrow.length - 1] = 'Delete';
+                for(let k=2;k<dayrow.length-1;k++){
+                    let periodCell = periods[k-2];
+                    let periodName = periodCell.textContent.trim(); 
+                    let periodStatus = ''; 
+
+                    if (periodCell.classList.contains('Present')) {
+                        periodStatus = 'Present';
+                    } else if (periodCell.classList.contains('Absent')) {
+                        periodStatus = 'Absent';
+                    } else if (periodCell.classList.contains('no-class')) {
+                        periodStatus = 'no-class';
+                    }
+                    if(!periodName) periodStatus = '';
+                    periodName.slice(0, 100);
+                    dayrow[k] = { [periodName]: periodStatus };   
+
+                }
                 list_of_deleted.add(dayrow[0]);
                 break outerloop;
             }
         }
     }
     loadStoredTimetable(main_status_timetable);
-    displaySubjects();
+    updateAttendanceStats();
 }
 function finalizedata(){
     const weekRows = document.querySelectorAll(".week-row");
@@ -1545,6 +1549,8 @@ function finalizedata(){
                         } else if (periodCell.classList.contains('no-class')) {
                             periodStatus = 'no-class';
                         }
+                        if(!periodName) periodStatus='';
+                        periodName.slice(0, 100);
                         dayrow[l] = { [periodName]: periodStatus };
                     }
                     break mainloop;
@@ -1615,6 +1621,8 @@ function convertRowToStatus(row) {
         } else if (periodCell.classList.contains('no-class')) {
             periodStatus = 'no-class';
         }
+        if(!periodName) periodStatus = '';
+        periodName.slice(0, 100);
         rowData.push({ [periodName]: periodStatus });   
 
     });
@@ -1640,7 +1648,6 @@ function getDayInt(dateStr) {
 }
 
 function openPopup() {
-    document.querySelector('input[name="status"][value=""]').click();
     document.dispatchEvent(customevent);
     // Remove existing popup if already open
     const existingPopup = document.getElementById("popup");
@@ -1692,6 +1699,7 @@ function restore(deletedrowdate) {
             }
         }
     }
+    document.dispatchEvent(customevent);
 }
 
 function closePopup() {

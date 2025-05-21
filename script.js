@@ -63,6 +63,7 @@ auth.onAuthStateChanged((user) => {
     dropdown.innerHTML = `
     <option value=''>Select a theme...</option>
     `;
+    First.style.display = 'none';
     nav.style.display = 'none';
     imp.style.display = 'none';
     fts.style.display = 'block';

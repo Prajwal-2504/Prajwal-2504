@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -27,7 +28,14 @@
             <p>❌ You are not signed in to the Self Attendance website. Please press the <strong>"Sign in"</strong> button.</p>
             <button id="loginBtn" onclick="login()">Sign in with Google</button>
         </div>
-        <div id="first-time" style="display: none;"></div>
+        <div id="first-time" style="display: none;">
+            <h2>No stored timetable data found <span id="temp"></span>. Please select a JSON file where you might have stored your data</h2><br>
+            <input type="file" id="file_input_on_first_spawn" onchange="file_input_first(event)"><br><br>
+            <h2>If you are setting up your Timetable for the first time, press the Add New Week button to start adding weeks!</h2>
+            <h3>Or if you have other themes where data is saved you many select from the dropdown!</h3>
+            <h3>You may also sign out and login with a different account where your data might be stored!</h3>
+            <button class="sign-out-btn" onclick="auth.signOut()">Sign Out</button>
+        </div>
         <table>
             <tbody id="table-container"></tbody>
         </table>
@@ -55,7 +63,12 @@
                     <tr><th>Friday</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
                 </tbody>
             </table>
-            <div id="first-time-date"></div><br>
+            <div id="first-time-date" style="display: none;">
+                <h2>No stored timetable data found. Please select a start date for your timetable:</h2><br>
+                <input type='date' id='start-date' min='1970-01-01' max='calculatedate()'>
+                <button id='submit-date'>Submit</button>
+                <button id='cancel-date'>Cancel</button>
+            </div><br>
         </div>
         <div id="lets-do-it">
             <br>

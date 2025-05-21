@@ -5,6 +5,9 @@ body {
     margin-right: 150px;
     margin-top: 108px; /* Space from the top */
 }
+.week-buttons{
+    overflow : auto
+}
 #navbar {
     position: fixed;
     top: 0;

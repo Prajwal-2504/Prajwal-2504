@@ -76,14 +76,15 @@ let main_theme = null;
 let list_of_themes = new Set();
 let list_of_deleted = new Set();
 const fts = document.getElementById('first-time-sign-in');
+const attendance = document.getElementById('attendance-display-section');
+const attbtn = document.getElementById('attendance-btn');
+const temp_span = document.getElementById('temp');
 const checkbox = document.getElementById('myCheckbox');
 const input = document.getElementById('cpn');
 const statusSelect = document.getElementById('status');
 let selectedStatus = document.querySelector('input[name="status"]:checked')?.value;
 let radios = document.querySelectorAll("input[name='status']");
 const customevent = new CustomEvent('radioChange');
-const attendance = document.getElementById('attendance-display-section');
-const attbtn = document.getElementById('attendance-btn');
 const checkevent = new CustomEvent('checkchange');
 radios.forEach(radio => {
   radio.addEventListener('change', function () {
@@ -251,6 +252,7 @@ async function RetrieveData() {
     try {
         let snap = await db.collection('users').doc(uid).get();
         let data = snap.data();
+        theme_in_html.textContent = '';
         if(!data){
             alert(`❌ No data found for user: ${main_user}. Seems like you are using our website for the first time.`);
             db.collection('users').doc(uid).set({}, { merge: true })
@@ -300,10 +302,12 @@ async function MainThemeFunc(parameter){
             alert('This is already the current theme. Please select a different one.');
             return;
         }
-        let conf = confirm(`Make sure that you have saved all your data under current theme ${main_theme} before switching to theme ${new_theme}.
-        Otherwise, all changes will be lost.
-        Confirm to switch to theme ${new_theme} ?`);
-        if(!conf) return;
+        if(main_theme && main_status_timetable){
+            let conf = confirm(`Make sure that you have saved all your data under current theme ${main_theme} before switching to theme ${new_theme}.
+            Otherwise, all changes will be lost.
+            Confirm to switch to theme ${new_theme} ?`);
+            if(!conf) return;
+        }
         db.collection('users').doc(uid).set({
             theme : new_theme,
             all_themes : Array.from(list_of_themes)
@@ -329,7 +333,7 @@ async function MainThemeFunc(parameter){
             return;
         }
         list_of_themes.add(new_theme);
-        if(main_theme){
+        if(main_theme && main_status_timetable){
             let conf = confirm(`Make sure that you have saved all your data under current theme ${main_theme} before switching to new theme ${new_theme}.
             Otherwise, all changes will be lost.
             Confirm to switch to new theme ${new_theme} ?`);
@@ -496,15 +500,8 @@ function first(){
     most_imp.style.display = 'block';
     //theme_in_html.textContent = '';
     First.style.display = 'block';
-    First.innerHTML = `
-    <h2>No stored timetable data found <span id="temp"></span>. Please select a JSON file where you might have stored your data</h2><br>
-    <input type="file" id="file_input_on_first_spawn" onchange="file_input_first(event)"><br><br>
-    <h2>If you are setting up your Timetable for the first time, press the Add New Week button to start adding weeks!</h2>
-    <h3>Or if you have other themes where data is saved you many select from the dropdown!</h3>
-    <h3>You may also sign out and login with a different account where your data might be stored!</h3>
-    <button class="sign-out-btn" onclick="auth.signOut()">Sign Out</button>
-    `;
-    if(main_theme)  document.getElementById('temp').textContent = `under theme ${main_theme}!`;
+    if(main_theme)  temp_span.textContent = `under theme ${main_theme}!`;
+    else temp_span.textContent = ``;
     window.scrollTo(0, document.body.scrollHeight);
 }
 
@@ -517,41 +514,11 @@ function remove_first(){
     displaySubjects();
 }
 
-function updateSubjectsInTimetable() {
-    let updated_timetable = [[], [], [], [], []];  
-    let weekTables = document.querySelectorAll('.table-section');
-    if (weekTables.length === 0)    return null;
-    weekTables.forEach((weekTable) => {
-        let rows = weekTable.querySelectorAll('.week-row');
-        rows.forEach((row) => {
-            let dayCell = row.querySelector('.day-cell');
-            if (!dayCell) return;  
-            let day = dayCell.textContent.trim();  
-            let subjectCells = row.querySelectorAll('.period');
-            let Subjects=[];
-            subjectCells.forEach((subjectCell, index) => {
-                let subjectName = subjectCell.textContent.trim();  
-                Subjects.push(subjectName);
-            });
-            if(day === 'Monday')    updated_timetable[0] = Subjects;
-            if(day === 'Tuesday')    updated_timetable[1] = Subjects;
-            if(day === 'Wednesday')    updated_timetable[2] = Subjects;
-            if(day === 'Thursday')    updated_timetable[3] = Subjects;
-            if(day === 'Friday')    updated_timetable[4] = Subjects;
-            });
-        });
-        for(let i = 0; i < updated_timetable.length; i++)    if((updated_timetable[i]).length === 0)  updated_timetable[i] = latestTimetableData[i];
-    return updated_timetable;
+function calculatedate(){
+    return new Date().toISOString().split('T')[0];
 }
-
 function get_starting_date() {
     change_date.style.display = 'block';
-    change_date.innerHTML = `
-    <h2>No stored timetable data found. Please select a start date for your timetable:</h2><br>
-    <input type='date' id='start-date' min='1970-01-01' max='${new Date().toISOString().split('T')[0]}'>
-    <button id='submit-date'>Submit</button>
-    <button id='cancel-date'>Cancel</button>
-    `;
     let submitButton = document.getElementById('submit-date');
     submitButton.addEventListener('click', () => {
         let dateInput = document.getElementById('start-date').value;
@@ -756,9 +723,9 @@ function validateAndTruncateData(data) {
     if (truncationDone)        alert("Some data exceeded limits and has been truncated.");
 
     // Log the max values found
-    console.log(`Max Weeks Found: ${data.length}`);
-    console.log(`Max Rows Per Week Found: ${Math.max(...data.map(week => week.length))}`);
-    console.log(`Max Entries Per Row Found: ${Math.max(...data.flatMap(week => week.map(row => row.length)))}`);
+    //console.log(`Max Weeks Found: ${data.length}`);
+    //console.log(`Max Rows Per Week Found: ${Math.max(...data.map(week => week.length))}`);
+    //console.log(`Max Entries Per Row Found: ${Math.max(...data.flatMap(week => week.map(row => row.length)))}`);
 
     return data;
 }
@@ -853,6 +820,7 @@ function createWeeklyTables(param_timetable,monday_date,first_time) {
 
         let buttonContainer = document.createElement('div');
         buttonContainer.className = 'week-buttons';
+        buttonContainer.style.height = `${weekSection.clientHeight}px`;
 
         let button1 = document.createElement('button');
         button1.textContent = 'All Week';
@@ -887,6 +855,7 @@ function createWeeklyTables(param_timetable,monday_date,first_time) {
         buttonContainer.appendChild(pastedaywise);
 
         weekSection.insertBefore(buttonContainer,weekSection.firstChild);
+        buttonContainer.style.height = window.getComputedStyle(weekSection).height;
         if(!main_status_timetable)  main_status_timetable = [];
         if(convertWeekToStatus(weekSection).length) main_status_timetable.push(convertWeekToStatus(weekSection));
         updateAttendanceStats();
@@ -1009,6 +978,7 @@ async function loadStoredTimetable(data_if_passed,onload) {
 
             weekSection.insertBefore(buttonContainer,weekSection.firstChild);
             main_container.appendChild(weekSection);
+            buttonContainer.style.height = window.getComputedStyle(weekSection).height;
         }
         if (!document.querySelectorAll('.week-row').length) return first();
         //showlatest();
@@ -2013,5 +1983,33 @@ function showMenu(button, menu) {
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
+}
+
+
+function updateSubjectsInTimetable() {
+    let updated_timetable = [[], [], [], [], []];  
+    let weekTables = document.querySelectorAll('.table-section');
+    if (weekTables.length === 0)    return null;
+    weekTables.forEach((weekTable) => {
+        let rows = weekTable.querySelectorAll('.week-row');
+        rows.forEach((row) => {
+            let dayCell = row.querySelector('.day-cell');
+            if (!dayCell) return;  
+            let day = dayCell.textContent.trim();  
+            let subjectCells = row.querySelectorAll('.period');
+            let Subjects=[];
+            subjectCells.forEach((subjectCell, index) => {
+                let subjectName = subjectCell.textContent.trim();  
+                Subjects.push(subjectName);
+            });
+            if(day === 'Monday')    updated_timetable[0] = Subjects;
+            if(day === 'Tuesday')    updated_timetable[1] = Subjects;
+            if(day === 'Wednesday')    updated_timetable[2] = Subjects;
+            if(day === 'Thursday')    updated_timetable[3] = Subjects;
+            if(day === 'Friday')    updated_timetable[4] = Subjects;
+            });
+        });
+        for(let i = 0; i < updated_timetable.length; i++)    if((updated_timetable[i]).length === 0)  updated_timetable[i] = latestTimetableData[i];
+    return updated_timetable;
 }
 */

@@ -286,8 +286,8 @@ async function RetrieveData() {
         console.log('✅ Data retrieved for user:', main_user);
         //console.log(JSON.parse(data[`${main_theme} latest_timetable`]));
         latestTimetableData = JSON.parse(data[`${main_theme} latest_timetable`]);
-        return data;
-        //return JSON.parse(userretrive); 
+        //return data;
+        return JSON.parse(userretrive); 
     } catch (error) {
         alert(`❌ Error retrieving data: ${error}`);
         return null;
@@ -872,8 +872,6 @@ async function loadStoredTimetable(data_if_passed,onload) {
         capitalizelatest();
         //document.querySelector('input[name="status"][value=""]').click();
         main_status_timetable = data_if_passed || await RetrieveData();
-        if (!main_status_timetable || main_status_timetable.length === 0) return first();
-        main_status_timetable = data_if_passed ? data_if_passed : JSON.parse(main_status_timetable[`${main_theme} timetableData`]);
         if (!main_status_timetable || main_status_timetable.length === 0) return first();
         //validateAndTruncateData(main_status_timetable);
         //console.log(`Total no. of week datas in received data : ${main_status_timetable.length}`);

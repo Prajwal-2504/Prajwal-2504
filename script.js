@@ -31,6 +31,8 @@ let latestTimetableData = [
 ];
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 let main_status_timetable = null;
+let main_user = null;
+let uid = null;
 function login() {
     auth.signInWithPopup(provider)
     .then((result) => {
@@ -70,8 +72,6 @@ auth.onAuthStateChanged((user) => {
   }
 });
 
-let main_user = null;
-let uid = null;
 let main_theme = null;
 let list_of_themes = new Set();
 let list_of_deleted = new Set();

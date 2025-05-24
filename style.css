@@ -975,9 +975,7 @@ button.del-btn:active{
 }
 
 /* Styling for Show, Copy, and Paste buttons */
-#show-latest-btn, 
-#copy-latest-btn, 
-#paste-latest-btn {
+.week-btn-beside {
     background-color: #9060a3; /* Muted purple */
     color: white;
     border: 2px solid #734b80; /* Slightly darker shade */
@@ -989,16 +987,13 @@ button.del-btn:active{
 }
 
 /* Hover effect */
-#show-latest-btn:hover, 
-#copy-latest-btn:hover, 
-#paste-latest-btn:hover {
+.week-btn-beside:hover {
     background-color: #734b80; /* Deeper muted purple */
+    transform: scale(1.05); /* Slight zoom effect */
 }
 
 /* Active effect (on click) */
-#show-latest-btn:active, 
-#copy-latest-btn:active, 
-#paste-latest-btn:active {
+.week-btn-beside:active {
     background-color: #5b3a65; /* Even darker tone */
     transform: scale(0.95); /* Subtle shrink effect */
 }
@@ -1056,39 +1051,39 @@ button.del-btn:active{
 }
 #about-the-creator{
     text-align: center; 
-    padding: 16px; 
-    font-size: 14.4px; 
+    padding-top: 2.5px;
+    padding-bottom: 5px;
     color: #666666;
     font-weight: bold;
-    width: 100%;
     background-color: papayawhip; /* Light background for contrast */
-    margin-top: 20px; /* Space above the footer */
+    margin-top: 8px; /* Space above the footer */
+    margin-left: -170px;
+    margin-right: -150px;
+    margin-bottom: -8px; /* No space below the footer */
 }
-
-#footer-hr{
-    margin-bottom: 16px;
+#about-the-creator p {
+    font-size: 15px; 
+    margin-top: 2px; /* No top margin for the paragraph */
+    margin-bottom: 2px; /* No bottom margin for the paragraph */
 }
-
-#creator-image{
-    width: 100px; 
-    height: 100px; 
+#about-the-creator img {
+    height: 50px;
     border-radius: 50%; 
     object-fit: cover; 
-    margin-bottom: 16px; /* Space below the image */
+    cursor: pointer; /* Pointer cursor to indicate it's clickable */
 }
 
-#footer-email,
-#footer-linkedin,
-#creator-college,
-#creator-college-university {
+#about-the-creator a {
   color: #3366cc;
   text-decoration: none;
   transition: text-decoration 0.2s;
 }
 
-#footer-email:hover,
-#footer-linkedin:hover,
-#creator-college:hover,
-#creator-college-university:hover {
+#about-the-creator a:hover {
   text-decoration: underline;
+}
+
+#warning{
+    color: #cc0000;
+    font-weight: bold;
 }

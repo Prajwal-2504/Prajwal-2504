@@ -585,9 +585,10 @@ function first(){
     most_imp.style.display = 'block';
     //theme_in_html.textContent = '';
     First.style.display = 'block';
+    scrollToButtonWithOffset(document.getElementById('most_important'));
     if(main_theme)  temp_span.textContent = `under theme "${main_theme}"!`;
     else temp_span.textContent = ``;
-    window.scrollTo(0, document.body.scrollHeight);
+    //window.scrollTo(0, document.body.scrollHeight);
 }
 
 function remove_first(){

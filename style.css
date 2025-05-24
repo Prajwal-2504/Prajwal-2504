@@ -349,6 +349,7 @@ background-color: #0b4aaf;
     gap: 20px; /* Larger spacing between input boxes */
     border-radius: 15px;  /* Rounded corners for smooth edges */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    width: 98.85%; /* Full width of the container */
 }
 
 #period-container h3 {
@@ -1022,4 +1023,72 @@ button.del-btn:active{
     background-color: rgb(220, 150, 30); /* Even darker shade for active */
     border-color: rgb(210, 140, 20);
     transform: scale(0.95); /* Slight press effect */
+}
+
+#themes-section{
+    display: flex; 
+    gap: 16px; 
+    margin-top: 14px; 
+    margin-bottom: 14px;
+}
+
+#first-time{
+    display: none;
+}
+
+#add-week-btn{
+    margin-bottom: 16px;
+}
+
+#show-latest-btn,#copy-latest-btn, #paste-latest-btn {
+    margin-bottom: 16px;
+}
+
+#first-time-date{
+    display: none;
+}
+
+#latest-timetable{
+    display: none; 
+}
+#latest_timetable_heading {
+    display: none;
+}
+#about-the-creator{
+    text-align: center; 
+    padding: 16px; 
+    font-size: 14.4px; 
+    color: #666666;
+    font-weight: bold;
+    width: 100%;
+    background-color: papayawhip; /* Light background for contrast */
+    margin-top: 20px; /* Space above the footer */
+}
+
+#footer-hr{
+    margin-bottom: 16px;
+}
+
+#creator-image{
+    width: 100px; 
+    height: 100px; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    margin-bottom: 16px; /* Space below the image */
+}
+
+#footer-email,
+#footer-linkedin,
+#creator-college,
+#creator-college-university {
+  color: #3366cc;
+  text-decoration: none;
+  transition: text-decoration 0.2s;
+}
+
+#footer-email:hover,
+#footer-linkedin:hover,
+#creator-college:hover,
+#creator-college-university:hover {
+  text-decoration: underline;
 }

@@ -346,8 +346,7 @@ async function RetrieveData() {
         theme_in_html.textContent = main_theme;
         let userretrive = data[`${main_theme} timetableData`];
         if(!userretrive){
-            alert(`❌ No data under current theme ${main_theme} found for user: ${main_user}.
-            Please save some data under this theme to display here.`);
+            alert(`❌ No data under current theme ${main_theme} found for user: ${main_user}. \nPlease save some data under this theme to display here.`);
             return null;
         }
         console.log('✅ Data retrieved for user:', main_user);

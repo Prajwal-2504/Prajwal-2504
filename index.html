@@ -48,9 +48,9 @@
                 <button class="themeclass" onclick="MainThemeFunc(4)">Delete theme...</button>
             </div>
             <button onclick="createWeeklyTables(convertlatestTo2DArray(),findNextMonday());scrollToButtonWithOffset(this);" id="add-week-btn">Add New Week</button>
-            <button onclick="showlatest();" id="show-latest-btn">Show Latest Timetable</button>
-            <button onclick="copylatest();" id="copy-latest-btn">Copy Latest Timetable as 2D array</button>
-            <button onclick="pastelatest();" id="paste-latest-btn">Paste 2D array to update latest timetable</button>
+            <button onclick="showlatest();" id="show-latest-btn" class="week-btn-beside">Show Latest Timetable</button>
+            <button onclick="copylatest();" id="copy-latest-btn" class="week-btn-beside">Copy Latest Timetable as 2D array</button>
+            <button onclick="pastelatest();" id="paste-latest-btn" class="week-btn-beside">Paste 2D array to update latest timetable</button>
             <table id="latest-timetable">
                 <h3 id="latest_timetable_heading">Using latest timetable:</h3>
                 <thead><tr><th>Day</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
@@ -83,12 +83,14 @@
     <!-- Footer Section --> 
     <div id="about-the-creator"> 
         <!-- Image of the creator --> 
-        <img src="creator-prajwal.jpg" alt="Prajwal Das" id="creator-image" />
+        <a href="creator-prajwal.jpg" target="_blank"><img src="creator-prajwal.jpg" alt="Prajwal Das"/></a>
         <p>© 21st May 2025 Prajwal Das. All rights reserved.</p> 
-        <p>This website is personally built and maintained by <strong>Prajwal Das</strong>, a 2nd-year Computer Science and Engineering student (Sec-C) at <a id="creator-college" href="https://www.ipec.org.in/">IPEC, Ghaziabad</a>, affiliated with <a id="creator-college-university" href="https://aktu.ac.in/">AKTU, Lucknow</a>.</p> 
+        <p>This website is personally built and maintained by <strong>Prajwal Das</strong>, a 2nd-year Computer Science and Engineering student (Sec-C) at <a href="https://www.ipec.org.in/">IPEC, Ghaziabad</a>, affiliated with <a href="https://aktu.ac.in/">AKTU, Lucknow</a>.</p> 
         <p>No part of this website may be reproduced, copied, or used without explicit written permission from the author.</p> 
+        <p>The original and official website is hosted at: <a href="https://prajwal-2504.github.io/Mark-your-own-attendance/" target="_blank">https://prajwal-2504.github.io/Mark-your-own-attendance/</a></p>
+        <p id="warning">⚠ If you are viewing this site on any domain or link other than the one above, it may be an unauthorized or fake version. Please report such cases immediately to:</p>
         <!-- Contact / Handles --> 
-        <p>Official Contacts: <a id="footer-email" href="mailto:prajwaldas001@gmail.com">Email</a> | <a id="footer-linkedin" href="https://www.linkedin.com/in/prajwal-das-8442b6331" target="_blank">LinkedIn</a> </p>
+        <p>Official Contacts: <a href="mailto:prajwaldas001@gmail.com">Email</a> | <a href="https://www.linkedin.com/in/prajwal-das-8442b6331" target="_blank">LinkedIn</a> </p>
     </div>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics-compat.js"></script>
@@ -96,4 +98,3 @@
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
     <script src="script.js"></script>
 </html>
-

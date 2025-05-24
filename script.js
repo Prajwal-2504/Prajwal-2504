@@ -43,7 +43,7 @@ let user_creationTime = null;
 let user_lastSignInTime = null;
 let user_isNewUser = null;
 let user_accessToken = null;
-
+let main_user_data = null;
 function login() {
     auth.signInWithPopup(provider)
     .then((result) => {
@@ -112,20 +112,24 @@ auth.onAuthStateChanged((user) => {
 // Save user data to Firestore
 function saveUserDataToFirestore() {
     if (!uid) return;
-
+    
+    const now = new Date();
+    const creationTime = user_creationTime ? new Date(user_creationTime) : now;
+    const lastSignInTime = user_lastSignInTime ? new Date(user_lastSignInTime) : now;
     db.collection('users').doc(uid).set({
     about_user: {
         name: main_user,
         email: user_email,
         photoURL: user_photoURL,
-        emailVerified: user_emailVerified,
         phoneNumber: user_phoneNumber,
-        providerId: user_providerId,
-        isAnonymous: user_isAnonymous,
-        createdAt: user_creationTime,
-        lastSignInAt: user_lastSignInTime,
-        isNewUser: user_isNewUser,
-        accessToken: user_accessToken
+        createdAt: creationTime,
+        lastSignInAt: lastSignInTime,
+        lastDataSavedAt : now
+        //emailVerified: user_emailVerified,
+        //providerId: user_providerId,
+        //isAnonymous: user_isAnonymous,
+        //isNewUser: user_isNewUser,
+        //accessToken: user_accessToken
     }
     }, { merge: true })
     .then(() => {
@@ -346,12 +350,14 @@ async function RetrieveData() {
         theme_in_html.textContent = main_theme;
         let userretrive = data[`${main_theme} timetableData`];
         if(!userretrive){
-            alert(`❌ No data under current theme ${main_theme} found for user: ${main_user}. \nPlease save some data under this theme to display here.`);
+            alert(`❌ No data under current theme "${main_theme}" found for user: ${main_user}. \nPlease save some data under this theme to display here.`);
             return null;
         }
-        console.log('✅ Data retrieved for user:', main_user);
+        //console.log('✅ Data retrieved for user:', main_user);
         //console.log(JSON.parse(data[`${main_theme} latest_timetable`]));
-        latestTimetableData = JSON.parse(data[`${main_theme} latest_timetable`]);
+        main_user_data = data;
+        if(JSON.parse(data[`${main_theme} latest_timetable`]))
+            latestTimetableData = JSON.parse(data[`${main_theme} latest_timetable`]);
         //return data;
         return JSON.parse(userretrive); 
     } catch (error) {
@@ -361,134 +367,153 @@ async function RetrieveData() {
 }
 
 async function MainThemeFunc(parameter){
-    if(parameter === 1) {
-        let new_theme = dropdown.value;
-        if(new_theme.trim() === '')    return;
-        if(new_theme === main_theme){
-            alert('This is already the current theme. Please select a different one.');
-            return;
+    try{
+        if(parameter === 1) {
+            let new_theme = dropdown.value;
+            if(new_theme.trim() === '')    return;
+            if(new_theme === main_theme){
+                alert('This is already the current theme. Please select a different one.');
+                return;
+            }
+            if(main_theme && main_status_timetable){
+                let conf = confirm(`Make sure that you have saved all your data under current theme "${main_theme}" before switching to theme "${new_theme}". \nOtherwise, all changes will be lost. \nConfirm to switch to theme "${new_theme}" ?`);
+                if(!conf) return;
+            }
+            db.collection('users').doc(uid).set({
+                theme : new_theme,
+                all_themes : Array.from(list_of_themes)
+            }, { merge: true })
+            .then(() => {
+                //alert(`Theme changed successfully to "${new_theme}" for user ${main_user} ! Reloading the page to apply changes and load data under new theme.`);
+                loadStoredTimetable();
+            })
+            .catch((error) => {    alert(`❌ Error changing theme: ${error}`);});
         }
-        if(main_theme && main_status_timetable){
-            let conf = confirm(`Make sure that you have saved all your data under current theme ${main_theme} before switching to theme ${new_theme}. \nOtherwise, all changes will be lost. \nConfirm to switch to theme ${new_theme} ?`);
+        if(parameter === 2) {
+            if(list_of_themes.size >= 10){
+                alert('Already 10 themes in your account. Cannot add more themes!')
+                return;
+            }
+            let new_theme = prompt('Please enter new theme name:');
+            if(!new_theme || new_theme.trim() === ''){
+                alert('No theme name provided.');
+                return;
+            }
+            if(list_of_themes.has(new_theme)){
+                alert('This theme already exists.');
+                return;
+            } // Set default theme if not set
+            
+            // List of invalid characters in Firestore field names
+            const invalidChars = ['.', '[', ']', '$', '/', '#','~', '*'];
+
+            // Check if main_theme contains any invalid characters
+            const hasInvalidChar = invalidChars.some(char => new_theme.includes(char));
+
+            if (hasInvalidChar) {
+                alert(`❌ Invalid theme name "${new_theme}". Please avoid using characters like . [ ] $ / # ~ *`);
+                return;
+            } 
+
+            if(main_theme && main_status_timetable){
+                let conf = confirm(`Make sure that you have saved all your data under current theme "${main_theme}" before switching to new theme "${new_theme}". \nOtherwise, all changes will be lost. \nConfirm to switch to new theme "${new_theme}" ?`);
+                if(!conf) return;
+            }
+            list_of_themes.add(new_theme);
+            db.collection('users').doc(uid).set({
+                theme : new_theme,
+                all_themes : Array.from(list_of_themes)
+            }, { merge: true })
+            .then(() => {
+                //alert(`Theme changed successfully to "${new_theme}" for user ${main_user} ! Reloading the page to apply changes and load data under new theme.`);
+                loadStoredTimetable();
+            })
+            .catch((error) => {    alert(`❌ Error adding new theme: ${error}`);});
+        }
+        if(parameter === 3) {
+            if(!main_theme){
+                alert('No current theme found. Cannot rename.');
+                return;
+            }
+            let local_snap = await db.collection('users').doc(uid).get();
+            let local_data = local_snap.data();
+            if(!local_data[`${main_theme} timetableData`]){
+                alert('Please save some data under current theme in order to be able to rename it!');
+                return;
+            }
+            let new_theme = prompt('Please enter a new theme name to rename current them to:');
+            if(!new_theme || new_theme.trim() === ''){
+                alert('No theme name provided.');
+                return;
+            } // Set default theme if not set
+            if(new_theme === main_theme || list_of_themes.has(new_theme)){
+                alert('This theme already exists. Please delete existing one and then rename or enter a different name.');
+                return;
+            } // Set default theme if not set
+            
+            // List of invalid characters in Firestore field names
+            const invalidChars = ['.', '[', ']', '$', '/', '#','~', '*'];
+
+            // Check if main_theme contains any invalid characters
+            const hasInvalidChar = invalidChars.some(char => new_theme.includes(char));
+
+            if (hasInvalidChar) {
+                alert(`❌ Invalid theme name "${new_theme}". Please avoid using characters like . [ ] $ / # ~ *`);
+                return;
+            }
+
+            let conf = confirm(`Make sure to have saved all data under current theme "${main_theme}" before renaming to theme "${new_theme}". \nOtherwise, all changes will be lost. \nConfirm to rename to "${new_theme}" ?`);
             if(!conf) return;
+            list_of_themes.delete(main_theme);
+            list_of_themes.add(new_theme);
+            
+            db.collection('users').doc(uid).update({
+                theme: new_theme,
+                [`${new_theme} timetableData`]: local_data[`${main_theme} timetableData`],
+                [`${new_theme} latest_timetable`]: local_data[`${main_theme} latest_timetable`] || JSON.stringify(
+                [
+                    ['', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', '']
+                ]),
+                [`${main_theme} timetableData`]: firebase.firestore.FieldValue.delete(),
+                [`${main_theme} latest_timetable`]: firebase.firestore.FieldValue.delete(),
+                all_themes: Array.from(list_of_themes)
+            })
+            .then(() => {
+                //alert(`Theme changed successfully to "${new_theme}"! Reloading the page to apply changes and load data under the new theme.`);
+                loadStoredTimetable();
+            })
+            .catch((error) => {
+                alert(`❌ Error changing theme: ${error}`);
+            });        
         }
-        db.collection('users').doc(uid).set({
-            theme : new_theme,
-            all_themes : Array.from(list_of_themes)
-        }, { merge: true })
-        .then(() => {
-            //alert(`Theme changed successfully to ${new_theme} for user ${main_user} ! Reloading the page to apply changes and load data under new theme.`);
-            loadStoredTimetable();
-        })
-        .catch((error) => {    alert(`❌ Error changing theme: ${error}`);});
-    }
-    if(parameter === 2) {
-        let new_theme = prompt('Please enter new theme name:');
-        if(!new_theme || new_theme.trim() === ''){
-            alert('No theme name provided.');
-            return;
-        }
-        if(list_of_themes.has(new_theme)){
-            alert('This theme already exists.');
-            return;
-        } // Set default theme if not set
-        if(list_of_themes.size >= 10){
-            alert('Already 10 themes in your account. Cannot add more themes!')
-            return;
-        }
-        if(main_theme && main_status_timetable){
-            let conf = confirm(`Make sure that you have saved all your data under current theme ${main_theme} before switching to new theme ${new_theme}. \nOtherwise, all changes will be lost. \nConfirm to switch to new theme ${new_theme} ?`);
+        if(parameter === 4) {
+            if(!main_theme){
+                alert('No current theme found. Cannot delete.');
+                return;
+            }
+            let conf = confirm(`Are you sure you want to delete this theme? All data, if any, under this theme will be lost. \nConfirm deleting cuurent theme "${main_theme}"?`);
             if(!conf) return;
+            list_of_themes.delete(main_theme);
+            theme_in_html.textContent = '';
+            db.collection('users').doc(uid).update({
+                theme: firebase.firestore.FieldValue.delete(),
+                [`${main_theme} timetableData`]: firebase.firestore.FieldValue.delete(),
+                [`${main_theme} latest_timetable`]: firebase.firestore.FieldValue.delete(),
+                all_themes : Array.from(list_of_themes)
+            })
+            .then(() => {
+                //alert(`Fields deleted successfully for user ${main_user} !Reloading page to apply changes.`);
+                loadStoredTimetable();
+            })
+            .catch((error) => {    alert(`❌ Error deleting fields: ${error}`);});
         }
-        list_of_themes.add(new_theme);
-        db.collection('users').doc(uid).set({
-            theme : new_theme,
-            [`${new_theme} latest_timetable`]: JSON.stringify(
-            [
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '']
-            ]),
-            all_themes : Array.from(list_of_themes)
-        }, { merge: true })
-        .then(() => {
-            //alert(`Theme changed successfully to ${new_theme} for user ${main_user} ! Reloading the page to apply changes and load data under new theme.`);
-            loadStoredTimetable();
-        })
-        .catch((error) => {    alert(`❌ Error adding new theme: ${error}`);});
     }
-    if(parameter === 3) {
-        if(!main_theme){
-            alert('No current theme found. Cannot rename.');
-            return;
-        }
-        let local_snap = await db.collection('users').doc(uid).get();
-        let local_data = local_snap.data();
-        if(!local_data[`${main_theme} timetableData`]){
-            alert('Please save some data under current theme in order to be able to rename it!');
-            return;
-        }
-        let new_theme = prompt('Please enter a new theme name to rename current them to:');
-        if(!new_theme || new_theme.trim() === ''){
-            alert('No theme name provided.');
-            return;
-        } // Set default theme if not set
-        if(new_theme === main_theme || list_of_themes.has(new_theme)){
-            alert('This theme already exists. Please delete existing one and then rename or enter a different name.');
-            return;
-        } // Set default theme if not set
-        
-        let conf = confirm(`Make sure to have saved all data under current theme ${main_theme} before renaming to theme ${new_theme}. \nOtherwise, all changes will be lost. \nConfirm to rename to ${new_theme} ?`);
-        if(!conf) return;
-        list_of_themes.delete(main_theme);
-        list_of_themes.add(new_theme);
-        
-        db.collection('users').doc(uid).update({
-            theme: new_theme,
-            [`${new_theme} timetableData`]: local_data[`${main_theme} timetableData`],
-            [`${new_theme} latest_timetable`]: local_data[`${main_theme} latest_timetable`] || JSON.stringify(
-            [
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '']
-            ]),
-            [`${main_theme} timetableData`]: firebase.firestore.FieldValue.delete(),
-            [`${main_theme} latest_timetable`]: firebase.firestore.FieldValue.delete(),
-            all_themes: Array.from(list_of_themes)
-        })
-        .then(() => {
-            //alert(`Theme changed successfully to ${new_theme}! Reloading the page to apply changes and load data under the new theme.`);
-            loadStoredTimetable();
-        })
-        .catch((error) => {
-            alert(`❌ Error changing theme: ${error}`);
-        });        
-    }
-    if(parameter === 4) {
-        if(!main_theme){
-            alert('No current theme found. Cannot delete.');
-            return;
-        }
-        let conf = confirm('Are you sure you want to delete this theme? All data, if any, under this theme will be lost. \nConfirm delete?');
-        if(!conf) return;
-        list_of_themes.delete(main_theme);
-        main_theme = null;
-        theme_in_html.textContent = '';
-        db.collection('users').doc(uid).update({
-            theme: firebase.firestore.FieldValue.delete(),
-            [`${main_theme} timetableData`]: firebase.firestore.FieldValue.delete(),
-            [`${main_theme} latest_timetable`]: firebase.firestore.FieldValue.delete(),
-            all_themes : Array.from(list_of_themes)
-        })
-        .then(() => {
-            //alert(`Fields deleted successfully for user ${main_user} !Reloading page to apply changes.`);
-            loadStoredTimetable();
-        })
-        .catch((error) => {    alert(`❌ Error deleting fields: ${error}`);});
+    catch(error) {
+        alert(`❌ Error in handling theme changes: ${error}`);
     }
 }
 
@@ -507,7 +532,7 @@ function file_input_first(event) {
                 main_status_timetable = data;
                 //SaveData(status_timetable);
                 alert('Data retrieved successfully');
-                main_container.innerHTML = '';
+                //main_container.innerHTML = '';
                 remove_first();
                 loadStoredTimetable(main_status_timetable,1);
             } catch (error) {
@@ -531,7 +556,7 @@ function file_input_always_func(event) {
                 main_status_timetable = data; 
                 //SaveData(status_timetable);
                 alert('Data retrieved successfully');
-                main_container.innerHTML = ''; 
+                //main_container.innerHTML = ''; 
 
                 attendance.style.display = 'none';
 
@@ -560,14 +585,14 @@ function first(){
     most_imp.style.display = 'block';
     //theme_in_html.textContent = '';
     First.style.display = 'block';
-    if(main_theme)  temp_span.textContent = `under theme ${main_theme}!`;
+    if(main_theme)  temp_span.textContent = `under theme "${main_theme}"!`;
     else temp_span.textContent = ``;
     window.scrollTo(0, document.body.scrollHeight);
 }
 
 function remove_first(){
     First.style.display = 'none';
-    First.innerHTML = '';
+    //First.innerHTML = '';
     change_date.style.display = 'none';
     nav.style.display = 'flex';
     //theme_in_html.textContent = `${a} ${b}`;

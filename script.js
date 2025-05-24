@@ -30,35 +30,72 @@ let latestTimetableData = [
     ['', '', '', '', '', '', '', '']
 ];
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-let main_status_timetable = null;
+// Firebase User Info Global Variables
 let main_user = null;
 let uid = null;
+let user_email = null;
+let user_photoURL = null;
+let user_emailVerified = null;
+let user_phoneNumber = null;
+let user_providerId = null;
+let user_isAnonymous = null;
+let user_creationTime = null;
+let user_lastSignInTime = null;
+let user_isNewUser = null;
+let user_accessToken = null;
+
 function login() {
     auth.signInWithPopup(provider)
     .then((result) => {
-        main_user = result.user.displayName;
-        uid = result.user.uid;
-        alert(`✅ Signed in: ${main_user}`);
+        const user = result.user;
+        const additionalInfo = result.additionalUserInfo;
+        const credential = result.credential;
+
+        // Assign values to global variables
+        main_user = user.displayName;
+        uid = user.uid;
+        user_email = user.email;
+        user_photoURL = user.photoURL;
+        user_emailVerified = user.emailVerified;
+        user_phoneNumber = user.phoneNumber;
+        user_providerId = user.providerId;
+        user_isAnonymous = user.isAnonymous;
+        user_creationTime = user.metadata.creationTime;
+        user_lastSignInTime = user.metadata.lastSignInTime;
+        user_isNewUser = additionalInfo?.isNewUser || null;
+        user_accessToken = credential?.accessToken || null;
+
+        alert(`✅ Signed in: ${main_user}\n📧 Email: ${user_email}`);
+
         dropdown.innerHTML = `
         <option value=''>Select a theme...</option>
         `;
         fts.style.display = 'none';
-        loadStoredTimetable(undefined,1); // Load data now that user is signed in
+        loadStoredTimetable(undefined, 1); // Load data now that user is signed in
     })
     .catch((error) => {
         alert(`❌ Login failed: ${error.message}`);
     });
 }
+
 auth.onAuthStateChanged((user) => {
   if (user) {
     main_user = user.displayName;
     uid = user.uid;
-    console.log('✅ Already signed in:', main_user);
-    loadStoredTimetable(undefined,1);
+    user_email = user.email;
+    user_photoURL = user.photoURL;
+    user_emailVerified = user.emailVerified;
+    user_phoneNumber = user.phoneNumber;
+    user_providerId = user.providerId;
+    user_isAnonymous = user.isAnonymous;
+    user_creationTime = user.metadata.creationTime;
+    user_lastSignInTime = user.metadata.lastSignInTime;
+
+    //console.log(`✅ Already signed in: ${main_user}, 📧 Email: ${user_email}`);
+    loadStoredTimetable(undefined, 1);
   } else {
     console.log('👋 Not signed in. Triggering login...');
     main_container.innerHTML = '';
-    //theme_in_html.textContent = '';
     most_imp.style.display = 'none';
     resetlatest();
     dropdown.style.display = 'none';
@@ -72,6 +109,34 @@ auth.onAuthStateChanged((user) => {
   }
 });
 
+// Save user data to Firestore
+function saveUserDataToFirestore() {
+    if (!uid) return;
+
+    db.collection('users').doc(uid).set({
+    about_user: {
+        name: main_user,
+        email: user_email,
+        photoURL: user_photoURL,
+        emailVerified: user_emailVerified,
+        phoneNumber: user_phoneNumber,
+        providerId: user_providerId,
+        isAnonymous: user_isAnonymous,
+        createdAt: user_creationTime,
+        lastSignInAt: user_lastSignInTime,
+        isNewUser: user_isNewUser,
+        accessToken: user_accessToken
+    }
+    }, { merge: true })
+    .then(() => {
+    // console.log('✅ User data saved under about_user');
+    })
+    .catch((error) => {
+    // console.error('❌ Error saving user data:', error);
+    });
+}
+
+let main_status_timetable = null;
 let main_theme = null;
 let list_of_themes = new Set();
 let list_of_deleted = new Set();
@@ -223,6 +288,7 @@ function SaveData(datatobesaved) {
         }
         list_of_themes = validateAndTruncateThemes(list_of_themes);
         datatobesaved = validateAndTruncateData(datatobesaved);
+        saveUserDataToFirestore();
         db.collection('users').doc(uid).set({
             theme : main_theme,
             [`${main_theme} timetableData`]: JSON.stringify(datatobesaved),
@@ -230,7 +296,7 @@ function SaveData(datatobesaved) {
             all_themes : Array.from(list_of_themes)
         }, { merge: true })
         .then(() => {
-            console.log('✅ Data saved successfully for user:', main_user);
+            //console.log('✅ Data saved successfully for user:', main_user);
             alert(`Data saved successfully for user ${main_user} !`);
             loadStoredTimetable();
         })
@@ -255,7 +321,8 @@ async function RetrieveData() {
         theme_in_html.textContent = '';
         if(!data){
             alert(`❌ No data found for user: ${main_user}. Seems like you are using our website for the first time.`);
-            db.collection('users').doc(uid).set({}, { merge: true })
+            //db.collection('users').doc(uid).set({}, { merge: true })
+            saveUserDataToFirestore();
             return null;
         }
         list_of_themes = new Set(data.all_themes);
@@ -303,9 +370,7 @@ async function MainThemeFunc(parameter){
             return;
         }
         if(main_theme && main_status_timetable){
-            let conf = confirm(`Make sure that you have saved all your data under current theme ${main_theme} before switching to theme ${new_theme}.
-            Otherwise, all changes will be lost.
-            Confirm to switch to theme ${new_theme} ?`);
+            let conf = confirm(`Make sure that you have saved all your data under current theme ${main_theme} before switching to theme ${new_theme}. \nOtherwise, all changes will be lost. \nConfirm to switch to theme ${new_theme} ?`);
             if(!conf) return;
         }
         db.collection('users').doc(uid).set({
@@ -332,13 +397,11 @@ async function MainThemeFunc(parameter){
             alert('Already 10 themes in your account. Cannot add more themes!')
             return;
         }
-        list_of_themes.add(new_theme);
         if(main_theme && main_status_timetable){
-            let conf = confirm(`Make sure that you have saved all your data under current theme ${main_theme} before switching to new theme ${new_theme}.
-            Otherwise, all changes will be lost.
-            Confirm to switch to new theme ${new_theme} ?`);
+            let conf = confirm(`Make sure that you have saved all your data under current theme ${main_theme} before switching to new theme ${new_theme}. \nOtherwise, all changes will be lost. \nConfirm to switch to new theme ${new_theme} ?`);
             if(!conf) return;
         }
+        list_of_themes.add(new_theme);
         db.collection('users').doc(uid).set({
             theme : new_theme,
             [`${new_theme} latest_timetable`]: JSON.stringify(
@@ -378,9 +441,7 @@ async function MainThemeFunc(parameter){
             return;
         } // Set default theme if not set
         
-        let conf = confirm(`Make sure to have saved all data under current theme ${main_theme} before renaming to theme ${new_theme}.
-        Otherwise, all changes will be lost.
-        Confirm to rename to ${new_theme} ?`);
+        let conf = confirm(`Make sure to have saved all data under current theme ${main_theme} before renaming to theme ${new_theme}. \nOtherwise, all changes will be lost. \nConfirm to rename to ${new_theme} ?`);
         if(!conf) return;
         list_of_themes.delete(main_theme);
         list_of_themes.add(new_theme);
@@ -413,7 +474,7 @@ async function MainThemeFunc(parameter){
             alert('No current theme found. Cannot delete.');
             return;
         }
-        let conf = confirm('Are you sure you want to delete this theme? All data under this theme will be lost.');
+        let conf = confirm('Are you sure you want to delete this theme? All data, if any, under this theme will be lost. \nConfirm delete?');
         if(!conf) return;
         list_of_themes.delete(main_theme);
         main_theme = null;
@@ -982,7 +1043,7 @@ async function loadStoredTimetable(data_if_passed,onload) {
         //showlatest();
         //resetlatest();
         First.style.display = "none";
-        change_date.innerHTML = '';
+        //change_date.innerHTML = '';
         change_date.style.display = 'none';
 
         for(let i=0;i<main_status_timetable.length;i++){
@@ -1002,6 +1063,7 @@ async function loadStoredTimetable(data_if_passed,onload) {
         if(onload)  scrollToButtonWithOffset(document.getElementById('add-week-btn'));
     }
     catch(error){
+        //console.error(error);
         alert(`❌ Error loading data to html page: ${error}\nRedirecting to first spawn`);
         //console.error(error);
         return first();
@@ -1196,8 +1258,8 @@ function showlatest(){
     let th3 = document.getElementById("latest_timetable_heading");
     if(latest_btn.textContent === 'Show Latest Timetable') {
         latest_btn.textContent = 'Hide Latest Timetable';
-        latestTimetable.style.display = '';
-        th3.style.display = '';
+        latestTimetable.style.display = 'table';
+        th3.style.display = 'block';
     }
     else {
         latest_btn.textContent = 'Show Latest Timetable';
